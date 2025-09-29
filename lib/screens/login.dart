@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/common.dart';
-import '../main.dart';
-import 'success.dart';
+import 'success_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   static const route = '/login';
@@ -19,7 +18,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _submit() {
     setState(() {
-      emailErr = (email.text.contains('@')) ? null : "E-mail incorreto ou inválido";
+      emailErr =
+          (email.text.contains('@')) ? null : "E-mail incorreto ou inválido";
       passErr = (pass.text.length >= 6) ? null : "Senha incorreta ou inválida";
     });
     if (emailErr == null && passErr == null) {
@@ -38,26 +38,40 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("Cuidado com carinho.", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+              const Text("Cuidado com carinho.",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
               const SizedBox(height: 12),
-              const Text("LOGIN", style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text("LOGIN",
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               const SizedBox(height: 12),
-              LabeledField(label: "E-mail", hint: "Digite seu e-mail", controller: email,
-                keyboard: TextInputType.emailAddress),
-              if (emailErr != null) Padding(
-                padding: const EdgeInsets.only(top: 6, left: 4),
-                child: Text(emailErr!, style: const TextStyle(color: Colors.red)),
-              ),
+              LabeledField(
+                  label: "E-mail",
+                  hint: "Digite seu e-mail",
+                  controller: email,
+                  keyboard: TextInputType.emailAddress),
+              if (emailErr != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 6, left: 4),
+                  child: Text(emailErr!,
+                      style: const TextStyle(color: Colors.red)),
+                ),
               const SizedBox(height: 12),
-              LabeledField(label: "Senha", hint: "Digite sua senha", controller: pass, obscure: true),
-              if (passErr != null) Padding(
-                padding: const EdgeInsets.only(top: 6, left: 4),
-                child: Text(passErr!, style: const TextStyle(color: Colors.red)),
-              ),
+              LabeledField(
+                  label: "Senha",
+                  hint: "Digite sua senha",
+                  controller: pass,
+                  obscure: true),
+              if (passErr != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 6, left: 4),
+                  child:
+                      Text(passErr!, style: const TextStyle(color: Colors.red)),
+                ),
               const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(onPressed: _submit, child: const Text("Entrar")),
+                child: ElevatedButton(
+                    onPressed: _submit, child: const Text("Entrar")),
               ),
               const SizedBox(height: 16),
               const Divider(),

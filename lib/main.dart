@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'screens/onboarding.dart';
 import 'screens/role_selection.dart';
 import 'screens/login.dart';
-import 'screens/caregiver_signup.dart';
-import 'screens/guardian_signup.dart';
-import 'screens/elder_signup.dart';
-import 'screens/success.dart';
+import 'screens/caregiver_signup_screen.dart';
+import 'screens/guardian_signup_screen.dart';
+import 'screens/elder_signup_screen.dart';
+import 'screens/success_screen.dart';
 
 void main() {
   runApp(const CogitareApp());
@@ -68,9 +68,9 @@ class CogitareApp extends StatelessWidget {
       routes: {
         RoleSelectionScreen.route: (_) => const RoleSelectionScreen(),
         LoginScreen.route: (_) => const LoginScreen(),
-        CaregiverSignupFlow.route: (_) => const CaregiverSignupFlow(),
-        GuardianSignupFlow.route: (_) => const GuardianSignupFlow(),
-        ElderSignupFlow.route: (_) => const ElderSignupFlow(),
+        CaregiverSignupScreen.route: (_) => const CaregiverSignupScreen(),
+        GuardianSignupScreen.route: (_) => const GuardianSignupScreen(),
+        ElderSignupScreen.route: (_) => const ElderSignupScreen(),
         SuccessScreen.route: (_) => const SuccessScreen(),
       },
     );

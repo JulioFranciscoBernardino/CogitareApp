@@ -10,6 +10,10 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
+  http: ^1.1.0
+  intl: ^0.19.0
+  flutter_dotenv: ^5.1.0
+  mysql1: ^0.20.0
 
 dev_dependencies:
   flutter_test:
@@ -22,3 +26,4 @@ flutter:
     - assets/images/onboarding1.png
     - assets/images/onboarding2.png
     - assets/images/onboarding3.png
+    - .env

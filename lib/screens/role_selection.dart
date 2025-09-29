@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/common.dart';
-import 'caregiver_signup.dart';
-import 'guardian_signup.dart';
+import 'caregiver_signup_screen.dart';
+import 'guardian_signup_screen.dart';
 
 class RoleSelectionScreen extends StatelessWidget {
   static const route = '/role';
@@ -18,12 +18,14 @@ class RoleSelectionScreen extends StatelessWidget {
             const Spacer(),
             const Icon(Icons.person_2, size: 160),
             const SizedBox(height: 12),
-            const Text("Eu sou...", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+            const Text("Eu sou...",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => Navigator.pushNamed(context, CaregiverSignupFlow.route),
+                onPressed: () =>
+                    Navigator.pushNamed(context, CaregiverSignupScreen.route),
                 child: const Text("CUIDADOR"),
               ),
             ),
@@ -33,10 +35,12 @@ class RoleSelectionScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: OutlinedButton(
-                onPressed: () => Navigator.pushNamed(context, GuardianSignupFlow.route),
+                onPressed: () =>
+                    Navigator.pushNamed(context, GuardianSignupScreen.route),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
                 child: const Text("RESPONSÁVEL"),
               ),
