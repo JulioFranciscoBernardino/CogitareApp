@@ -43,3 +43,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# User-specific files
+android/local.properties
+.vscode/settings.json
