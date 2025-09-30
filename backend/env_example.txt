@@ -1,0 +1,18 @@
+# Copie este conteúdo para um arquivo chamado .env na pasta backend
+
+# Configurações do Banco de Dados
+DB_HOST=mysql-cogitare.alwaysdata.net
+DB_PORT=3306
+DB_NAME=cogitare_bd
+DB_USER=cogitare
+DB_PASSWORD=fT4qJ7n7M$n7t12T#v}T;
+
+# Configurações da API
+PORT=3000
+JWT_SECRET=cogitare_jwt_secret_2024_muito_seguro_123456789
+API_BASE_URL=https://cogitare.alwaysdata.net/api
+
+# Configurações de Segurança
+CORS_ORIGIN=*
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100

@@ -7,7 +7,7 @@ class DatabaseConfig {
   static const String dbPassword = "fT4qJ7n7M\$n7t12T#v}T;";
 
   // URL da API (se você tiver um backend)
-  static const String apiBaseUrl = 'https://api-cogitare.alwaysdata.net';
+  static const String apiBaseUrl = 'http://localhost:3000';
 
   // String de conexão
   static String get connectionString =>

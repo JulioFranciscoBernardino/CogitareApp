@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/common.dart';
+import '../services/api_service.dart';
 import 'success_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -13,18 +14,46 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final email = TextEditingController();
   final pass = TextEditingController();
+  final tipoController = TextEditingController();
   String? emailErr;
   String? passErr;
+  bool isLoading = false;
 
-  void _submit() {
+  void _submit() async {
     setState(() {
       emailErr =
           (email.text.contains('@')) ? null : "E-mail incorreto ou inválido";
       passErr = (pass.text.length >= 6) ? null : "Senha incorreta ou inválida";
     });
+
     if (emailErr == null && passErr == null) {
-      Navigator.pushReplacementNamed(context, SuccessScreen.route,
-          arguments: "Login simulado com sucesso!");
+      setState(() {
+        isLoading = true;
+      });
+
+      try {
+        // Por enquanto, vamos usar 'cuidador' como tipo padrão
+        // Futuramente pode ser implementado um seletor de tipo
+        final result =
+            await ApiService.login(email.text, pass.text, 'cuidador');
+
+        if (result['success']) {
+          Navigator.pushReplacementNamed(context, SuccessScreen.route,
+              arguments: "Login realizado com sucesso!");
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(result['message'] ?? 'Erro no login')),
+          );
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro de conexão: $e')),
+        );
+      } finally {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -71,7 +100,14 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                    onPressed: _submit, child: const Text("Entrar")),
+                    onPressed: isLoading ? null : _submit,
+                    child: isLoading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text("Entrar")),
               ),
               const SizedBox(height: 16),
               const Divider(),
