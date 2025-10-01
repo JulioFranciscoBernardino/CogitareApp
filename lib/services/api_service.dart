@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../config/database_config.dart';
 
 class ApiService {
-  static String get baseUrl => DatabaseConfig.apiUrl;
+  static const String baseUrl = 'http://localhost:3000';
   static String? _token;
 
   // Armazenar token após login

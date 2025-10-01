@@ -5,7 +5,7 @@ DB_HOST=mysql-cogitare.alwaysdata.net
 DB_PORT=3306
 DB_NAME=cogitare_bd
 DB_USER=cogitare
-DB_PASSWORD=fT4qJ7n7M$n7t12T#v}T;
+DB_PASSWORD=2Ytt1tl1b1o1vCuXpV2T
 
 # Configurações da API
 PORT=3000

@@ -1126,6 +1126,7 @@ CREATE TABLE `responsavel` (
   `Email` varchar(100) DEFAULT NULL,
   `Telefone` varchar(20) DEFAULT NULL,
   `DataNascimento` date DEFAULT NULL,
+  `Senha` varchar(255) DEFAULT NULL,
   `FotoUrl` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 

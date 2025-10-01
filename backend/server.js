@@ -9,6 +9,7 @@ const authRoutes = require('./routes/auth');
 const cuidadorRoutes = require('./routes/cuidador');
 const idosoRoutes = require('./routes/idoso');
 const enderecoRoutes = require('./routes/endereco');
+const responsavelRoutes = require('./routes/responsavel');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -49,6 +50,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/cuidador', cuidadorRoutes);
 app.use('/api/idoso', idosoRoutes);
 app.use('/api/endereco', enderecoRoutes);
+app.use('/api/responsavel', responsavelRoutes);
 
 // Rota de health check
 app.get('/api/health', (req, res) => {
@@ -71,6 +73,7 @@ app.get('/', (req, res) => {
       cuidador: '/api/cuidador',
       idoso: '/api/idoso',
       endereco: '/api/endereco',
+      responsavel: '/api/responsavel',
       health: '/api/health'
     }
   });

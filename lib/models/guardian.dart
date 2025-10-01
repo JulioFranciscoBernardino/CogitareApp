@@ -7,6 +7,7 @@ class Guardian {
   final String? phone;
   final DateTime? birthDate;
   final String? photoUrl;
+  final String? password;
 
   Guardian({
     this.id,
@@ -17,6 +18,7 @@ class Guardian {
     this.phone,
     this.birthDate,
     this.photoUrl,
+    this.password,
   });
 
   Map<String, dynamic> toJson() {
@@ -55,6 +57,7 @@ class Guardian {
     String? phone,
     DateTime? birthDate,
     String? photoUrl,
+    String? password,
   }) {
     return Guardian(
       id: id ?? this.id,
@@ -65,6 +68,7 @@ class Guardian {
       phone: phone ?? this.phone,
       birthDate: birthDate ?? this.birthDate,
       photoUrl: photoUrl ?? this.photoUrl,
+      password: password ?? this.password,
     );
   }
 }

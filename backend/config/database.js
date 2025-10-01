@@ -7,7 +7,7 @@ class Database {
       host: process.env.DB_HOST || 'mysql-cogitare.alwaysdata.net',
       port: process.env.DB_PORT || 3306,
       user: process.env.DB_USER || 'cogitare',
-      password: process.env.DB_PASSWORD || 'fT4qJ7n7M$n7t12T#v}T;',
+      password: process.env.DB_PASSWORD || '2Ytt1tl1b1o1vCuXpV2T',
       database: process.env.DB_NAME || 'cogitare_bd',
       waitForConnections: true,
       connectionLimit: 10,

@@ -122,6 +122,10 @@ class _GuardianSignupScreenState extends State<GuardianSignupScreen> {
         _validateCPF(cpfController.text) == null &&
         _validatePhone(phoneController.text) == null &&
         _validateZipCode(zipCodeController.text) == null &&
+        cityController.text.isNotEmpty &&
+        neighborhoodController.text.isNotEmpty &&
+        streetController.text.isNotEmpty &&
+        numberController.text.isNotEmpty &&
         birthDate != null;
   }
 
@@ -170,6 +174,7 @@ class _GuardianSignupScreenState extends State<GuardianSignupScreen> {
         email: emailController.text,
         phone: phoneController.text,
         birthDate: birthDate,
+        password: passwordController.text,
       );
 
       // Create guardian
