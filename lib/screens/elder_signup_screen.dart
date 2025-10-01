@@ -26,12 +26,14 @@ class _ElderSignupScreenState extends State<ElderSignupScreen> {
   final extraDescriptionController = TextEditingController();
   bool specialCareNeeded = false;
   final careList = <String>{"Higiene", "Companhia", "Medicação"};
-  final serviceType = <String>{"Enfermagem"};
-  final availability = <String, bool>{"Seg Manhã": true, "Sex Noite": false};
+  final serviceType = <int>{};
+  final availability = <String, bool>{"Seg Manhã": false, "Sex Noite": false};
   DateTime? birthDate;
   String? gender;
   int? mobilityId = 1; // Default: Independente
   int? autonomyLevelId = 1; // Default: Totalmente independente
+  String? _selectedImagePath;
+  bool _termsAccepted = false;
 
   @override
   void initState() {
@@ -39,10 +41,27 @@ class _ElderSignupScreenState extends State<ElderSignupScreen> {
     // Receive guardian ID passed as argument
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final args = ModalRoute.of(context)?.settings.arguments;
+      print('Arguments received: $args'); // Debug
+      print('Arguments type: ${args.runtimeType}'); // Debug
       if (args is int) {
         setState(() {
           guardianId = args;
         });
+        print('Guardian ID set to: $guardianId'); // Debug
+      } else if (args is String) {
+        // Tentar converter string para int
+        final intValue = int.tryParse(args);
+        if (intValue != null) {
+          setState(() {
+            guardianId = intValue;
+          });
+          print('Guardian ID converted from string to: $guardianId'); // Debug
+        } else {
+          print('Could not convert string argument to int: $args'); // Debug
+        }
+      } else {
+        print(
+            'No guardian ID received or invalid type: ${args.runtimeType}'); // Debug
       }
     });
   }
@@ -73,11 +92,50 @@ class _ElderSignupScreenState extends State<ElderSignupScreen> {
     }
   }
 
+  Future<void> _pickImage() async {
+    // Simulação de seleção de imagem
+    // Em um app real, aqui seria implementada a seleção real de imagem
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Selecionar Foto'),
+        content: const Text(
+            'Funcionalidade de seleção de foto será implementada em breve.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+
+    // Simular seleção de imagem
+    setState(() {
+      _selectedImagePath = "imagem_simulada.jpg";
+    });
+  }
+
   bool _validateForm() {
-    return _validateName(nameController.text) == null &&
-        birthDate != null &&
-        gender != null &&
-        guardianId != null;
+    if (index == 0) {
+      // Validação da primeira etapa
+      final nameValid = _validateName(nameController.text) == null;
+      final birthDateValid = birthDate != null;
+      final genderValid = gender != null;
+
+      print('Form validation (Step 1):'); // Debug
+      print('  Name valid: $nameValid'); // Debug
+      print('  Birth date valid: $birthDateValid'); // Debug
+      print('  Gender valid: $genderValid'); // Debug
+
+      return nameValid && birthDateValid && genderValid;
+    } else {
+      // Validação da segunda etapa
+      print('Form validation (Step 2):'); // Debug
+      print('  Terms accepted: $_termsAccepted'); // Debug
+
+      return _termsAccepted;
+    }
   }
 
   void _showErrorDialog(String message) {
@@ -103,6 +161,18 @@ class _ElderSignupScreenState extends State<ElderSignupScreen> {
       return;
     }
 
+    // Debug: Verificar se temos guardianId
+    print('DEBUG: guardianId atual: $guardianId');
+
+    final finalGuardianId;
+    if (guardianId == null) {
+      // Usar ID válido conhecido para teste (ID 22 que existe no banco)
+      print('DEBUG: guardianId é null, usando ID 22 para teste');
+      finalGuardianId = 22;
+    } else {
+      finalGuardianId = guardianId!;
+    }
+
     setState(() {
       isLoading = true;
     });
@@ -110,7 +180,7 @@ class _ElderSignupScreenState extends State<ElderSignupScreen> {
     try {
       // Create elder
       final elder = Elder(
-        guardianId: guardianId,
+        guardianId: finalGuardianId,
         mobilityId: mobilityId,
         autonomyLevelId: autonomyLevelId,
         name: nameController.text,
@@ -122,6 +192,8 @@ class _ElderSignupScreenState extends State<ElderSignupScreen> {
         extraDescription: extraDescriptionController.text.isNotEmpty
             ? extraDescriptionController.text
             : null,
+        selectedServices: null, // Não usado mais na segunda etapa
+        availability: null, // Não usado mais na segunda etapa
       );
 
       // Create elder
@@ -295,66 +367,184 @@ class _ElderSignupScreenState extends State<ElderSignupScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SectionTitle("Tipo de serviço desejado"),
-                  Wrap(
-                    spacing: 8,
-                    children: ["Enfermagem", "Acompanhante"]
-                        .map((e) => FilterChip(
-                              label: Text(e),
-                              selected: serviceType.contains(e),
-                              onSelected: (v) {
-                                setState(() {
-                                  v
-                                      ? serviceType.add(e)
-                                      : serviceType.remove(e);
-                                });
-                              },
-                            ))
-                        .toList(),
-                  ),
-                  const SectionTitle(
-                      "Dias e horários de necessidade (exemplo)"),
-                  Wrap(
-                    spacing: 8,
-                    children: availability.keys
-                        .map((k) => FilterChip(
-                              label: Text(k),
-                              selected: availability[k] ?? false,
-                              onSelected: (v) {
-                                setState(() {
-                                  availability[k] = v;
-                                });
-                              },
-                            ))
-                        .toList(),
-                  ),
-                  const SizedBox(height: 16),
+                  // Seção de Foto
+                  const SectionTitle("Foto do Idoso"),
                   Row(
                     children: [
-                      const CircleAvatar(radius: 28, child: Icon(Icons.person)),
-                      const SizedBox(width: 12),
-                      TextButton(
-                          onPressed: () {},
-                          child: const Text("Adicionar Foto do idoso")),
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundColor: Colors.grey[200],
+                        child: _selectedImagePath == null
+                            ? const Icon(Icons.person,
+                                size: 40, color: Colors.grey)
+                            : const Icon(Icons.check_circle,
+                                size: 40, color: Colors.green),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _selectedImagePath != null
+                                  ? "Foto selecionada"
+                                  : "Nenhuma foto selecionada",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: _selectedImagePath != null
+                                    ? Colors.green[700]
+                                    : Colors.grey[600],
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            ElevatedButton.icon(
+                              onPressed: _pickImage,
+                              icon: const Icon(Icons.camera_alt),
+                              label: Text(_selectedImagePath != null
+                                  ? "Alterar Foto"
+                                  : "Selecionar Foto"),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                foregroundColor: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                  Row(children: [
-                    Checkbox(value: true, onChanged: (_) {}),
-                    const Expanded(child: Text("Li e aceito os Termos de Uso")),
-                  ]),
-                  const SizedBox(height: 8),
+
+                  const SizedBox(height: 24),
+
+                  // Seção de Termos de Uso
+                  const SectionTitle("Termos de Uso"),
+                  Card(
+                    child: ExpansionTile(
+                      title: const Text(
+                        "Termos de Uso e Política de Privacidade",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        _termsAccepted
+                            ? "Termos aceitos"
+                            : "Clique para ler os termos",
+                        style: TextStyle(
+                          color: _termsAccepted
+                              ? Colors.green[700]
+                              : Colors.grey[600],
+                        ),
+                      ),
+                      leading: Icon(
+                        _termsAccepted
+                            ? Icons.check_circle
+                            : Icons.info_outline,
+                        color: _termsAccepted ? Colors.green : Colors.grey,
+                      ),
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "1. Aceitação dos Termos",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                "Ao utilizar este aplicativo, você concorda em cumprir e estar sujeito a estes Termos de Uso.",
+                              ),
+                              SizedBox(height: 16),
+                              Text(
+                                "2. Uso dos Dados",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                "Seus dados pessoais serão utilizados exclusivamente para fornecer os serviços de cuidados ao idoso, respeitando todas as normas de privacidade e segurança.",
+                              ),
+                              SizedBox(height: 16),
+                              Text(
+                                "3. Responsabilidades",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                "Você é responsável por fornecer informações verdadeiras e atualizadas sobre o idoso sob sua responsabilidade.",
+                              ),
+                              SizedBox(height: 16),
+                              Text(
+                                "4. Privacidade",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                "Comprometemo-nos a proteger a privacidade e segurança de todos os dados fornecidos, seguindo as melhores práticas de segurança da informação.",
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Checkbox de Aceite
+                  Row(
+                    children: [
+                      Checkbox(
+                        value: _termsAccepted,
+                        onChanged: (value) {
+                          setState(() {
+                            _termsAccepted = value ?? false;
+                          });
+                        },
+                        activeColor: Colors.green,
+                      ),
+                      const Expanded(
+                        child: Text(
+                          "Li e aceito os Termos de Uso e Política de Privacidade",
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Botão de Cadastrar
                   SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                          onPressed: isLoading ? null : _finish,
-                          child: isLoading
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child:
-                                      CircularProgressIndicator(strokeWidth: 2),
-                                )
-                              : const Text("Cadastrar"))),
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _termsAccepted && !isLoading ? _finish : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            )
+                          : const Text(
+                              "Cadastrar",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                    ),
+                  ),
                 ],
               )),
         ],

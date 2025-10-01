@@ -1,7 +1,5 @@
 const express = require('express');
-const bcrypt = require('bcryptjs');
 const db = require('../config/database');
-const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -9,45 +7,78 @@ const router = express.Router();
 router.post('/', async (req, res) => {
   try {
     const {
-      nome,
-      email,
-      senha,
-      telefone,
-      cpf,
-      data_nascimento,
-      endereco_id,
-      mobilidade_id,
-      nivel_autonomia_id
+      IdResponsavel,
+      IdMobilidade,
+      IdNivelAutonomia,
+      Nome,
+      DataNascimento,
+      Sexo,
+      CuidadosMedicos,
+      DescricaoExtra,
+      FotoUrl,
+      SelectedServices,
+      Availability
     } = req.body;
 
-    // Verificar se email já existe
-    const existingUser = await db.query(
-      'SELECT id FROM idoso WHERE email = ?',
-      [email]
-    );
-
-    if (existingUser.length > 0) {
+    // Validar campos obrigatórios
+    if (!Nome || !DataNascimento || !Sexo || !IdResponsavel || !IdMobilidade || !IdNivelAutonomia) {
       return res.status(400).json({
         success: false,
-        message: 'Email já cadastrado'
+        message: 'Todos os campos obrigatórios devem ser preenchidos'
       });
     }
 
-    // Criptografar senha
-    const hashedPassword = await bcrypt.hash(senha, 10);
+    // Verificar se responsável existe
+    const existingGuardian = await db.query(
+      'SELECT IdResponsavel FROM responsavel WHERE IdResponsavel = ?',
+      [IdResponsavel]
+    );
+
+    if (existingGuardian.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Responsável não encontrado'
+      });
+    }
 
     // Inserir idoso
     const result = await db.query(
-      `INSERT INTO idoso (nome, email, senha, telefone, cpf, data_nascimento, endereco_id, mobilidade_id, nivel_autonomia_id) 
+      `INSERT INTO idoso (IdResponsavel, IdMobilidade, IdNivelAutonomia, Nome, DataNascimento, Sexo, CuidadosMedicos, DescricaoExtra, FotoUrl) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [nome, email, hashedPassword, telefone, cpf, data_nascimento, endereco_id, mobilidade_id, nivel_autonomia_id]
+      [
+        IdResponsavel, 
+        IdMobilidade, 
+        IdNivelAutonomia, 
+        Nome, 
+        DataNascimento, 
+        Sexo, 
+        CuidadosMedicos || null, 
+        DescricaoExtra || null, 
+        FotoUrl || null
+      ]
     );
+
+    const idosoId = result.insertId;
+
+    // Salvar serviços selecionados (se houver)
+    if (SelectedServices && SelectedServices.length > 0) {
+      // Por enquanto, vamos apenas logar os serviços selecionados
+      // Futuramente pode ser implementada uma tabela de relacionamento
+      console.log('Serviços selecionados para idoso', idosoId, ':', SelectedServices);
+    }
+
+    // Salvar disponibilidade (se houver)
+    if (Availability && Availability.length > 0) {
+      // Por enquanto, vamos apenas logar a disponibilidade
+      // Futuramente pode ser implementada uma tabela de disponibilidade para idosos
+      console.log('Disponibilidade para idoso', idosoId, ':', Availability);
+    }
 
     res.status(201).json({
       success: true,
       message: 'Idoso cadastrado com sucesso',
       data: {
-        id: result.insertId
+        IdIdoso: idosoId
       }
     });
 
@@ -60,18 +91,43 @@ router.post('/', async (req, res) => {
   }
 });
 
+// Listar idosos
+router.get('/', async (req, res) => {
+  try {
+    const idosos = await db.query(
+      `SELECT i.*, r.Nome as ResponsavelNome, m.Descricao as MobilidadeDesc, na.Descricao as AutonomiaDesc
+       FROM idoso i 
+       LEFT JOIN responsavel r ON i.IdResponsavel = r.IdResponsavel 
+       LEFT JOIN mobilidade m ON i.IdMobilidade = m.IdMobilidade
+       LEFT JOIN nivelautonomia na ON i.IdNivelAutonomia = na.IdNivelAutonomia`
+    );
+
+    res.json({
+      success: true,
+      data: idosos
+    });
+
+  } catch (error) {
+    console.error('Erro ao listar idosos:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erro interno do servidor'
+    });
+  }
+});
+
 // Buscar idoso por ID
-router.get('/:id', authenticateToken, async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
 
     const idosos = await db.query(
-      `SELECT i.*, e.*, m.descricao as mobilidade_desc, na.descricao as autonomia_desc
+      `SELECT i.*, r.Nome as ResponsavelNome, m.Descricao as MobilidadeDesc, na.Descricao as AutonomiaDesc
        FROM idoso i 
-       LEFT JOIN endereco e ON i.endereco_id = e.id 
-       LEFT JOIN mobilidade m ON i.mobilidade_id = m.id
-       LEFT JOIN nivelautonomia na ON i.nivel_autonomia_id = na.id
-       WHERE i.id = ?`,
+       LEFT JOIN responsavel r ON i.IdResponsavel = r.IdResponsavel 
+       LEFT JOIN mobilidade m ON i.IdMobilidade = m.IdMobilidade
+       LEFT JOIN nivelautonomia na ON i.IdNivelAutonomia = na.IdNivelAutonomia
+       WHERE i.IdIdoso = ?`,
       [id]
     );
 
@@ -82,93 +138,13 @@ router.get('/:id', authenticateToken, async (req, res) => {
       });
     }
 
-    const idoso = idosos[0];
-    delete idoso.senha; // Remover senha da resposta
-
     res.json({
       success: true,
-      data: idoso
+      data: idosos[0]
     });
 
   } catch (error) {
     console.error('Erro ao buscar idoso:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erro interno do servidor'
-    });
-  }
-});
-
-// Atualizar idoso
-router.put('/:id', authenticateToken, async (req, res) => {
-  try {
-    const { id } = req.params;
-    const {
-      nome,
-      telefone,
-      cpf,
-      data_nascimento,
-      endereco_id,
-      mobilidade_id,
-      nivel_autonomia_id
-    } = req.body;
-
-    // Verificar se idoso existe
-    const existingIdoso = await db.query(
-      'SELECT id FROM idoso WHERE id = ?',
-      [id]
-    );
-
-    if (existingIdoso.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: 'Idoso não encontrado'
-      });
-    }
-
-    // Atualizar idoso
-    await db.query(
-      `UPDATE idoso SET 
-       nome = ?, telefone = ?, cpf = ?, data_nascimento = ?, 
-       endereco_id = ?, mobilidade_id = ?, nivel_autonomia_id = ?
-       WHERE id = ?`,
-      [nome, telefone, cpf, data_nascimento, endereco_id, mobilidade_id, nivel_autonomia_id, id]
-    );
-
-    res.json({
-      success: true,
-      message: 'Idoso atualizado com sucesso'
-    });
-
-  } catch (error) {
-    console.error('Erro ao atualizar idoso:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erro interno do servidor'
-    });
-  }
-});
-
-// Listar idosos
-router.get('/', authenticateToken, async (req, res) => {
-  try {
-    const idosos = await db.query(
-      `SELECT i.id, i.nome, i.email, i.telefone, i.cpf, i.data_nascimento,
-              e.logradouro, e.numero, e.bairro, e.cidade, e.estado, e.cep,
-              m.descricao as mobilidade_desc, na.descricao as autonomia_desc
-       FROM idoso i 
-       LEFT JOIN endereco e ON i.endereco_id = e.id 
-       LEFT JOIN mobilidade m ON i.mobilidade_id = m.id
-       LEFT JOIN nivelautonomia na ON i.nivel_autonomia_id = na.id`
-    );
-
-    res.json({
-      success: true,
-      data: idosos
-    });
-
-  } catch (error) {
-    console.error('Erro ao listar idosos:', error);
     res.status(500).json({
       success: false,
       message: 'Erro interno do servidor'

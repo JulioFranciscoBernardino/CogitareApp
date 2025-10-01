@@ -9,6 +9,8 @@ class Elder {
   final String? medicalCare;
   final String? extraDescription;
   final String? photoUrl;
+  final List<int>? selectedServices;
+  final List<String>? availability;
 
   Elder({
     this.id,
@@ -21,6 +23,8 @@ class Elder {
     this.medicalCare,
     this.extraDescription,
     this.photoUrl,
+    this.selectedServices,
+    this.availability,
   });
 
   Map<String, dynamic> toJson() {
@@ -34,6 +38,8 @@ class Elder {
       'CuidadosMedicos': medicalCare,
       'DescricaoExtra': extraDescription,
       'FotoUrl': photoUrl,
+      'SelectedServices': selectedServices,
+      'Availability': availability,
     };
   }
 
@@ -51,6 +57,12 @@ class Elder {
       medicalCare: json['CuidadosMedicos'],
       extraDescription: json['DescricaoExtra'],
       photoUrl: json['FotoUrl'],
+      selectedServices: json['SelectedServices'] != null
+          ? List<int>.from(json['SelectedServices'])
+          : null,
+      availability: json['Availability'] != null
+          ? List<String>.from(json['Availability'])
+          : null,
     );
   }
 
@@ -65,6 +77,8 @@ class Elder {
     String? medicalCare,
     String? extraDescription,
     String? photoUrl,
+    List<int>? selectedServices,
+    List<String>? availability,
   }) {
     return Elder(
       id: id ?? this.id,
@@ -77,6 +91,8 @@ class Elder {
       medicalCare: medicalCare ?? this.medicalCare,
       extraDescription: extraDescription ?? this.extraDescription,
       photoUrl: photoUrl ?? this.photoUrl,
+      selectedServices: selectedServices ?? this.selectedServices,
+      availability: availability ?? this.availability,
     );
   }
 }

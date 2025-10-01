@@ -185,7 +185,9 @@ class _GuardianSignupScreenState extends State<GuardianSignupScreen> {
 
       if (response['success'] == true) {
         // Store guardian ID for elder registration
-        final guardianId = response['data']['IdResponsavel'];
+        final guardianId = response['data']['idResponsavel'];
+        print('DEBUG: Guardian ID capturado: $guardianId');
+        print('DEBUG: Response completa: $response');
         Navigator.pushReplacementNamed(context, ElderSignupScreen.route,
             arguments: guardianId);
       } else {

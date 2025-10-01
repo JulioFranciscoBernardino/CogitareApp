@@ -5,26 +5,13 @@ class ElderService {
   // Criar idoso via API
   static Future<Map<String, dynamic>> createElder(Elder elder) async {
     try {
-      final response = await ApiService.post('/api/idoso', {
-        'nome': elder.name,
-        'email':
-            'elder@example.com', // Elder model doesn't have email, using default
-        'senha':
-            'default123', // Elder model doesn't have password, using default
-        'telefone':
-            '11999999999', // Elder model doesn't have phone, using default
-        'cpf': '00000000000', // Elder model doesn't have CPF, using default
-        'data_nascimento': elder.birthDate?.toIso8601String().split('T')[0],
-        'endereco_id': 1, // Default address ID
-        'mobilidade_id': elder.mobilityId,
-        'nivel_autonomia_id': elder.autonomyLevelId,
-      });
+      final response = await ApiService.post('/api/idoso', elder.toJson());
 
       if (response['success']) {
         return {
           'success': true,
           'message': response['message'],
-          'elderId': response['data']['id'],
+          'elderId': response['data']['IdIdoso'],
         };
       } else {
         return {
@@ -85,16 +72,10 @@ class ElderService {
   // Atualizar idoso via API
   static Future<Map<String, dynamic>> updateElder(int id, Elder elder) async {
     try {
-      final response = await ApiService.put('/api/idoso/$id', {
-        'nome': elder.name,
-        'telefone':
-            '11999999999', // Elder model doesn't have phone, using default
-        'cpf': '00000000000', // Elder model doesn't have CPF, using default
-        'data_nascimento': elder.birthDate?.toIso8601String().split('T')[0],
-        'endereco_id': 1, // Default address ID
-        'mobilidade_id': elder.mobilityId,
-        'nivel_autonomia_id': elder.autonomyLevelId,
-      });
+      final elderData = elder.toJson();
+      elderData.remove('IdIdoso'); // Remove ID do objeto antes de enviar
+
+      final response = await ApiService.put('/api/idoso/$id', elderData);
 
       if (response['success']) {
         return {
