@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'role_selection.dart'; // ou a tela final que você quer chamar
+import 'main_selection_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -14,17 +14,28 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  final List<Map<String, String>> onboardingData = [
+  final List<Map<String, dynamic>> onboardingData = [
     {
-      "title": "Conecte-se com cuidadores de confiança",
+      "title": "Conecte-se a cuidadores de confiança",
+      "subtitle":
+          "Encontre profissionais verificados perto de você, com experiência e avaliações reais.",
+      "benefits": [
+        "Perfis verificados e com certificados.",
+        "Avaliações e comentários de famílias.",
+        "Mensagem direta com os cuidadores pelo app."
+      ],
       "image": "assets/images/onboarding1.png"
     },
     {
       "title": "Organize a rotina e a saúde",
+      "subtitle": "",
+      "benefits": [],
       "image": "assets/images/onboarding2.png"
     },
     {
       "title": "Converse, combine e pague com segurança",
+      "subtitle": "",
+      "benefits": [],
       "image": "assets/images/onboarding3.png"
     },
   ];
@@ -46,7 +57,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   onPressed: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (_) => const RoleSelectionScreen()),
+                      MaterialPageRoute(
+                          builder: (_) => const MainSelectionScreen()),
                     );
                   },
                   child: const Text("Vamos começar?"),
@@ -59,19 +71,92 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           return Container(
             color: Colors.white,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if (data["image"] != null)
-                  Image.asset(data["image"]!, height: 300),
-                const SizedBox(height: 40),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    data["title"]!,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                // Cabeçalho com logo e botão Pular
+                _buildHeader(),
+
+                // Conteúdo principal
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 20),
+
+                        // Título principal
+                        Text(
+                          data["title"] as String,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF28323C),
+                          ),
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        // Subtítulo (apenas para primeira tela)
+                        if (data["subtitle"] != null &&
+                            (data["subtitle"] as String).isNotEmpty)
+                          Text(
+                            data["subtitle"] as String,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                              height: 1.4,
+                            ),
+                          ),
+
+                        // Lista de benefícios (apenas para primeira tela)
+                        if (data["benefits"] != null &&
+                            (data["benefits"] as List).isNotEmpty) ...[
+                          const SizedBox(height: 24),
+                          ...((data["benefits"] as List)
+                              .map((benefit) => Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 4),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          "• ",
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            benefit as String,
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.grey,
+                                              height: 1.4,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ))),
+                        ],
+
+                        const SizedBox(height: 30),
+
+                        // Imagem
+                        if (data["image"] != null)
+                          SizedBox(
+                            width: double.infinity,
+                            child: Image.asset(
+                              data["image"] as String,
+                              fit: BoxFit.fitWidth,
+                            ),
+                          ),
+
+                        const SizedBox(height: 20),
+                      ],
                     ),
                   ),
                 ),
@@ -81,6 +166,51 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         },
       ),
       bottomNavigationBar: _buildDots(),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(24, 50, 24, 20),
+      child: Row(
+        children: [
+          // Logo horizontal
+          SizedBox(
+            height: 40,
+            child: Image.asset(
+              'assets/images/logo_cogitare_horizontal.png',
+              fit: BoxFit.contain,
+            ),
+          ),
+
+          const Spacer(),
+
+          // Botão Pular
+          TextButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (_) => const MainSelectionScreen()),
+              );
+            },
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.black87,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text(
+              'Pular',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

@@ -1,6 +1,9 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'screens/splash_screen.dart';
 import 'screens/onboarding.dart';
+import 'screens/main_selection_screen.dart';
+import 'screens/login_type_selection_screen.dart';
+import 'screens/signup_type_selection_screen.dart';
 import 'screens/role_selection.dart';
 import 'screens/login.dart';
 import 'screens/caregiver_signup_screen.dart';
@@ -60,12 +63,17 @@ class CogitareApp extends StatelessWidget {
     );
 
     return MaterialApp(
-      home: OnboardingScreen(),
+      home: const SplashScreen(),
       debugShowCheckedModeBanner: false,
       title: 'COGITARE',
       theme: theme,
-      initialRoute: OnboardingScreen.route,
+      initialRoute: SplashScreen.route,
       routes: {
+        SplashScreen.route: (_) => const SplashScreen(),
+        MainSelectionScreen.route: (_) => const MainSelectionScreen(),
+        LoginTypeSelectionScreen.route: (_) => const LoginTypeSelectionScreen(),
+        SignupTypeSelectionScreen.route: (_) =>
+            const SignupTypeSelectionScreen(),
         RoleSelectionScreen.route: (_) => const RoleSelectionScreen(),
         LoginScreen.route: (_) => const LoginScreen(),
         CaregiverSignupScreen.route: (_) => const CaregiverSignupScreen(),

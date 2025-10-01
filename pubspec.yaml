@@ -26,4 +26,6 @@ flutter:
     - assets/images/onboarding1.png
     - assets/images/onboarding2.png
     - assets/images/onboarding3.png
+    - assets/images/logo_cogitare.png
+    - assets/images/logo_cogitare_horizontal.png
     - .env
