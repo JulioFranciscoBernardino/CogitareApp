@@ -27,15 +27,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       "image": "assets/images/onboarding1.png"
     },
     {
-      "title": "Organize a rotina e a saúde",
-      "subtitle": "",
-      "benefits": [],
+      "title": "Organize a rotina e a saude",
+      "subtitle":
+          "Lembretes de remédio, agendamentos e o histórico de atendimentos em um só lugar.",
+      "benefits": [
+        "Lembretes automáticos para medicação e consultas.",
+        "Agenda com dias, horários e quem vai cuidar.",
+        "Histórico de serviços e anotações do cuidador."
+      ],
       "image": "assets/images/onboarding2.png"
     },
     {
       "title": "Converse, combine e pague com segurança",
-      "subtitle": "",
-      "benefits": [],
+      "subtitle": "Chat seguro, propostas fáceis e recibos organizados.",
+      "benefits": [
+        "Chat direto com notificações em tempo real.",
+        "Envie proposta, aceite ou recuse em um toque.",
+        "Histórico financeiro e comprovantes de pagamento."
+      ],
       "image": "assets/images/onboarding3.png"
     },
   ];
@@ -49,22 +58,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         itemCount: onboardingData.length + 1, // +1 para tela final
         itemBuilder: (context, index) {
           if (index == onboardingData.length) {
-            // Tela final
-            return Container(
-              color: Colors.white,
-              child: Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => const MainSelectionScreen()),
-                    );
-                  },
-                  child: const Text("Vamos começar?"),
-                ),
-              ),
-            );
+            // Tela final - Vamos começar!
+            return _buildWelcomeScreen();
           }
 
           final data = onboardingData[index];
@@ -96,7 +91,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
                         const SizedBox(height: 16),
 
-                        // Subtítulo (apenas para primeira tela)
+                        // Subtítulo
                         if (data["subtitle"] != null &&
                             (data["subtitle"] as String).isNotEmpty)
                           Text(
@@ -109,7 +104,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             ),
                           ),
 
-                        // Lista de benefícios (apenas para primeira tela)
+                        // Lista de benefícios
                         if (data["benefits"] != null &&
                             (data["benefits"] as List).isNotEmpty) ...[
                           const SizedBox(height: 24),
@@ -229,6 +224,134 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildWelcomeScreen() {
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: [
+          // Cabeçalho com logo
+          _buildWelcomeHeader(),
+
+          // Conteúdo principal
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: SizedBox(
+                width: 280,
+                height: 350,
+                child: Image.asset(
+                  'assets/images/idosa_lendo.png',
+                  fit: BoxFit.cover,
+                  alignment: Alignment.centerRight,
+                ),
+              ),
+            ),
+          ),
+
+          // Botão e textos inferiores
+          _buildWelcomeFooter(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWelcomeHeader() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(24, 50, 24, 20),
+      child: Row(
+        children: [
+          // Logo horizontal
+          SizedBox(
+            height: 40,
+            child: Image.asset(
+              'assets/images/logo_cogitare_horizontal.png',
+              fit: BoxFit.contain,
+            ),
+          ),
+          const Spacer(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWelcomeFooter() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 40),
+      child: Column(
+        children: [
+          // Botão principal
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const MainSelectionScreen()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF28323C),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text(
+                "Vamos começar!",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Texto de login
+          RichText(
+            textAlign: TextAlign.center,
+            text: const TextSpan(
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.black87,
+              ),
+              children: [
+                TextSpan(text: "Já tem uma conta? "),
+                TextSpan(
+                  text: "Faça login.",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          // Texto dos termos
+          RichText(
+            textAlign: TextAlign.center,
+            text: const TextSpan(
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+              children: [
+                TextSpan(text: "Ao prosseguir você concorda com os "),
+                TextSpan(
+                  text: "Termos de Uso",
+                  style: TextStyle(decoration: TextDecoration.underline),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
