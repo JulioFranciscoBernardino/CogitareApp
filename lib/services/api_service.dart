@@ -110,6 +110,21 @@ class ApiService {
     return response;
   }
 
+  // Método para login unificado (busca em todas as tabelas)
+  static Future<Map<String, dynamic>> unifiedLogin(
+      String email, String senha) async {
+    final response = await post('/api/auth/unified-login', {
+      'email': email,
+      'senha': senha,
+    });
+
+    if (response['success'] && response['data']['token'] != null) {
+      setToken(response['data']['token']);
+    }
+
+    return response;
+  }
+
   // Método para verificar se está logado
   static Future<bool> verifyToken() async {
     if (_token == null) return false;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'main_selection_screen.dart';
+import 'role_selection.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -183,9 +183,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           // Botão Pular
           TextButton(
             onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const MainSelectionScreen()),
+              // Navega para a última tela do onboarding (Vamos começar!)
+              _pageController.animateToPage(
+                onboardingData.length, // Índice da última tela
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
               );
             },
             style: TextButton.styleFrom(
@@ -291,7 +293,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (_) => const MainSelectionScreen()),
+                      builder: (_) => const RoleSelectionScreen()),
                 );
               },
               style: ElevatedButton.styleFrom(
@@ -317,16 +319,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           // Texto de login
           RichText(
             textAlign: TextAlign.center,
-            text: const TextSpan(
-              style: TextStyle(
+            text: TextSpan(
+              style: const TextStyle(
                 fontSize: 14,
                 color: Colors.black87,
               ),
               children: [
-                TextSpan(text: "Já tem uma conta? "),
-                TextSpan(
-                  text: "Faça login.",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                const TextSpan(text: "Já tem uma conta? "),
+                WidgetSpan(
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pushReplacementNamed(context, '/unified-login');
+                    },
+                    child: const Text(
+                      "Faça login.",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF28323C),
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),

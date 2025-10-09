@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'login_type_selection_screen.dart';
+import 'unified_login_screen.dart';
 import 'signup_type_selection_screen.dart';
 
 class MainSelectionScreen extends StatelessWidget {
@@ -81,7 +81,7 @@ class MainSelectionScreen extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () => Navigator.pushNamed(
                         context,
-                        LoginTypeSelectionScreen.route,
+                        UnifiedLoginScreen.route,
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
