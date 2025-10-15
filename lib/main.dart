@@ -8,6 +8,8 @@ import 'screens/caregiver_signup_screen.dart';
 import 'screens/guardian_signup_screen.dart';
 import 'screens/elder_signup_screen.dart';
 import 'screens/success_screen.dart';
+import 'screens/responsavel_dashboard_screen.dart';
+import 'screens/cuidador_dashboard_screen.dart';
 
 void main() {
   runApp(const CogitareApp());
@@ -77,6 +79,9 @@ class CogitareApp extends StatelessWidget {
         GuardianSignupScreen.route: (_) => const GuardianSignupScreen(),
         ElderSignupScreen.route: (_) => const ElderSignupScreen(),
         SuccessScreen.route: (_) => const SuccessScreen(),
+        ResponsavelDashboardScreen.route: (_) =>
+            const ResponsavelDashboardScreen(),
+        CuidadorDashboardScreen.route: (_) => const CuidadorDashboardScreen(),
       },
     );
   }

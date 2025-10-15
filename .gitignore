@@ -47,3 +47,7 @@ app.*.map.json
 # User-specific files
 android/local.properties
 .vscode/settings.json
+
+# Environment variables
+.env
+backend/.env

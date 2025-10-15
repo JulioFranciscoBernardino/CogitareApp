@@ -15,6 +15,7 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
   final passwordController = TextEditingController();
   bool isLoading = false;
   bool obscurePassword = true;
+  String? selectedUserType;
 
   @override
   Widget build(BuildContext context) {
@@ -117,6 +118,51 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 16,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // Campo Tipo de Usuário
+                    const Text(
+                      'Tipo de usuário',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: selectedUserType,
+                          hint: Text(
+                            'Selecione seu tipo',
+                            style: TextStyle(color: Colors.grey[400]),
+                          ),
+                          isExpanded: true,
+                          items: const [
+                            DropdownMenuItem(
+                              value: 'cuidador',
+                              child: Text('Cuidador'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'responsavel',
+                              child: Text('Responsável'),
+                            ),
+                          ],
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedUserType = newValue;
+                            });
+                          },
                         ),
                       ),
                     ),
@@ -253,12 +299,18 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
                                     Container(
                                       width: 20,
                                       height: 20,
-                                      decoration: const BoxDecoration(
-                                        image: DecorationImage(
-                                          image: NetworkImage(
-                                            'https://developers.google.com/identity/images/g-logo.png',
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue[600],
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Center(
+                                        child: Text(
+                                          'G',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12,
                                           ),
-                                          fit: BoxFit.contain,
                                         ),
                                       ),
                                     ),
@@ -359,7 +411,9 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
   }
 
   void _handleLogin() async {
-    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+    if (emailController.text.isEmpty ||
+        passwordController.text.isEmpty ||
+        selectedUserType == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Por favor, preencha todos os campos'),
@@ -373,10 +427,11 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
     });
 
     try {
-      // Usar o novo endpoint unificado que busca em ambas as tabelas
-      final result = await ApiService.unifiedLogin(
+      // Usar o endpoint de login com tipo específico
+      final result = await ApiService.login(
         emailController.text,
         passwordController.text,
+        selectedUserType!,
       );
 
       if (result['success']) {

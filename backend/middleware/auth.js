@@ -1,5 +1,8 @@
 const jwt = require('jsonwebtoken');
 
+// Definir JWT_SECRET com fallback
+const JWT_SECRET = process.env.JWT_SECRET || 'cogitare_jwt_secret_2024_muito_seguro_123456789';
+
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
@@ -11,7 +14,7 @@ const authenticateToken = (req, res, next) => {
     });
   }
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+  jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) {
       return res.status(403).json({ 
         success: false, 
@@ -30,7 +33,7 @@ const generateToken = (user) => {
       email: user.email, 
       tipo: user.tipo 
     },
-    process.env.JWT_SECRET,
+    JWT_SECRET,
     { expiresIn: '24h' }
   );
 };
