@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-class ApiService {
+class ServicoApi {
   static const String baseUrl = 'http://localhost:3000';
   static String? _token;
 

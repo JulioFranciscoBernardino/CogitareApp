@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'caregiver_signup_screen.dart';
-import 'guardian_signup_screen.dart';
+import 'tela_cadastro_cuidador.dart';
+import 'tela_cadastro_responsavel.dart';
+import 'onboarding.dart';
+import '../services/servico_autenticacao.dart';
 
-class RoleSelectionScreen extends StatelessWidget {
-  static const route = '/role';
-  const RoleSelectionScreen({super.key});
+class SelecaoPapel extends StatelessWidget {
+  static const route = '/selecao-papel';
+  const SelecaoPapel({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,17 +16,39 @@ class RoleSelectionScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Header com logo horizontal
+            // Header com logo horizontal e botão voltar
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: Row(
                 children: [
+                  // Botão voltar
+                  IconButton(
+                    onPressed: () async {
+                      HapticFeedback.lightImpact();
+                      // Limpar flag de processo de cadastro e ir para onboarding
+                      await ServicoAutenticacao.clearSignupProcess();
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const OnboardingScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.arrow_back_ios,
+                      color: Color(0xFF424242),
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
                   // Logo horizontal COGITARE
-                  SizedBox(
-                    height: 40,
-                    child: Image.asset(
-                      'assets/images/logo_cogitare_horizontal.png',
-                      fit: BoxFit.contain,
+                  Expanded(
+                    child: SizedBox(
+                      height: 40,
+                      child: Image.asset(
+                        'assets/images/logo_cogitare_horizontal.png',
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                 ],
@@ -58,7 +82,7 @@ class RoleSelectionScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
@@ -83,10 +107,12 @@ class RoleSelectionScreen extends StatelessWidget {
                           width: double.infinity,
                           height: 56,
                           child: ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               HapticFeedback.lightImpact();
+                              // Marcar que está no processo de cadastro
+                              await ServicoAutenticacao.markInSignupProcess();
                               Navigator.pushNamed(
-                                  context, CaregiverSignupScreen.route);
+                                  context, TelaCadastroCuidador.route);
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF424242),
@@ -126,10 +152,12 @@ class RoleSelectionScreen extends StatelessWidget {
                           width: double.infinity,
                           height: 56,
                           child: ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               HapticFeedback.lightImpact();
+                              // Marcar que está no processo de cadastro
+                              await ServicoAutenticacao.markInSignupProcess();
                               Navigator.pushNamed(
-                                  context, GuardianSignupScreen.route);
+                                  context, TelaCadastroResponsavel.route);
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF424242),

@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../widgets/common.dart';
-import '../models/elder.dart';
-import '../services/elder_service.dart';
-import 'success_screen.dart';
+import '../widgets/widgets_comuns.dart';
+import '../models/idoso.dart';
+import '../services/servico_idoso.dart';
+import 'tela_sucesso.dart';
 
-class ElderSignupScreen extends StatefulWidget {
-  static const route = '/signup/elder';
-  const ElderSignupScreen({super.key});
+class TelaCadastroIdoso extends StatefulWidget {
+  static const route = '/cadastro-idoso';
+  const TelaCadastroIdoso({super.key});
 
   @override
-  State<ElderSignupScreen> createState() => _ElderSignupScreenState();
+  State<TelaCadastroIdoso> createState() => _TelaCadastroIdosoState();
 }
 
-class _ElderSignupScreenState extends State<ElderSignupScreen> {
+class _TelaCadastroIdosoState extends State<TelaCadastroIdoso> {
   final page = PageController();
   int index = 0;
   bool isLoading = false;
@@ -179,7 +179,7 @@ class _ElderSignupScreenState extends State<ElderSignupScreen> {
 
     try {
       // Create elder
-      final elder = Elder(
+      final elder = Idoso(
         guardianId: finalGuardianId,
         mobilityId: mobilityId,
         autonomyLevelId: autonomyLevelId,
@@ -197,10 +197,10 @@ class _ElderSignupScreenState extends State<ElderSignupScreen> {
       );
 
       // Create elder
-      final response = await ElderService.createElder(elder);
+      final response = await ServicoIdoso.createIdoso(elder);
 
       if (response['success'] == true) {
-        Navigator.pushReplacementNamed(context, SuccessScreen.route,
+        Navigator.pushReplacementNamed(context, TelaSucesso.route,
             arguments: "Cadastro do idoso realizado com sucesso!");
       } else {
         _showErrorDialog(

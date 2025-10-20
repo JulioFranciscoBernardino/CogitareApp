@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../widgets/common.dart';
-import '../models/guardian.dart';
-import '../models/address.dart';
-import '../services/guardian_service.dart';
-import '../utils/validators.dart';
-import 'elder_signup_screen.dart';
+import '../widgets/widgets_comuns.dart';
+import '../models/responsavel.dart';
+import '../models/endereco.dart';
+import '../services/servico_responsavel.dart';
+import '../utils/validadores.dart';
+import 'tela_cadastro_idoso.dart';
 
-class GuardianSignupScreen extends StatefulWidget {
-  static const route = '/signup/guardian';
-  const GuardianSignupScreen({super.key});
+class TelaCadastroResponsavel extends StatefulWidget {
+  static const route = '/cadastro-responsavel';
+  const TelaCadastroResponsavel({super.key});
 
   @override
-  State<GuardianSignupScreen> createState() => _GuardianSignupScreenState();
+  State<TelaCadastroResponsavel> createState() =>
+      _TelaCadastroResponsavelState();
 }
 
-class _GuardianSignupScreenState extends State<GuardianSignupScreen> {
+class _TelaCadastroResponsavelState extends State<TelaCadastroResponsavel> {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -158,7 +159,7 @@ class _GuardianSignupScreenState extends State<GuardianSignupScreen> {
 
     try {
       // Create address
-      final address = Address(
+      final address = Endereco(
         city: cityController.text,
         neighborhood: neighborhoodController.text,
         street: streetController.text,
@@ -168,7 +169,7 @@ class _GuardianSignupScreenState extends State<GuardianSignupScreen> {
       );
 
       // Create guardian
-      final guardian = Guardian(
+      final guardian = Responsavel(
         cpf: cpfController.text,
         name: nameController.text,
         email: emailController.text,
@@ -178,7 +179,7 @@ class _GuardianSignupScreenState extends State<GuardianSignupScreen> {
       );
 
       // Create guardian
-      final response = await GuardianService.createComplete(
+      final response = await ServicoResponsavel.createComplete(
         address: address,
         guardian: guardian,
       );
@@ -188,7 +189,7 @@ class _GuardianSignupScreenState extends State<GuardianSignupScreen> {
         final guardianId = response['data']['idResponsavel'];
         print('DEBUG: Guardian ID capturado: $guardianId');
         print('DEBUG: Response completa: $response');
-        Navigator.pushReplacementNamed(context, ElderSignupScreen.route,
+        Navigator.pushReplacementNamed(context, TelaCadastroIdoso.route,
             arguments: guardianId);
       } else {
         _showErrorDialog(

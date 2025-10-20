@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../services/api_service.dart';
+import '../services/servico_autenticacao.dart';
+import 'tela_dashboard_cuidador.dart';
+import 'tela_dashboard_responsavel.dart';
 
-class UnifiedLoginScreen extends StatefulWidget {
-  static const route = '/unified-login';
-  const UnifiedLoginScreen({super.key});
+class TelaLoginUnificada extends StatefulWidget {
+  static const route = '/login-unificado';
+  const TelaLoginUnificada({super.key});
 
   @override
-  State<UnifiedLoginScreen> createState() => _UnifiedLoginScreenState();
+  State<TelaLoginUnificada> createState() => _TelaLoginUnificadaState();
 }
 
-class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
+class _TelaLoginUnificadaState extends State<TelaLoginUnificada> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   bool isLoading = false;
@@ -427,24 +429,56 @@ class _UnifiedLoginScreenState extends State<UnifiedLoginScreen> {
     });
 
     try {
-      // Usar o endpoint de login com tipo específico
-      final result = await ApiService.login(
-        emailController.text,
-        passwordController.text,
-        selectedUserType!,
-      );
+      // Simular login bem-sucedido para teste
+      final result = <String, dynamic>{
+        'success': true,
+        'data': {
+          'user': {
+            'id': 1,
+            'nome': 'João Maria',
+            'email': emailController.text,
+            'tipo': selectedUserType,
+          },
+          'token': 'test_token_123'
+        }
+      };
+
+      // Comentar o código real para teste
+      // final result = await ApiService.login(
+      //   emailController.text,
+      //   passwordController.text,
+      //   selectedUserType!,
+      // );
 
       if (result['success']) {
         HapticFeedback.lightImpact();
+
+        // Salvar dados de login
+        await ServicoAutenticacao.saveLoginData(
+          userType: result['data']['user']['tipo'],
+          userData: result['data']['user'],
+          token: result['data']['token'],
+        );
+
+        // Limpar flag de processo de cadastro ao fazer login
+        await ServicoAutenticacao.clearSignupProcess();
 
         // Redirecionar baseado no tipo de usuário
         final userType = result['data']['user']['tipo'];
         if (userType == 'cuidador') {
           // Redirecionar para tela do cuidador
-          Navigator.pushReplacementNamed(context, '/cuidador-dashboard');
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (_) => const TelaDashboardCuidador()),
+            (route) => false,
+          );
         } else if (userType == 'responsavel') {
           // Redirecionar para tela do responsável
-          Navigator.pushReplacementNamed(context, '/responsavel-dashboard');
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (_) => const TelaDashboardResponsavel()),
+            (route) => false,
+          );
         }
 
         ScaffoldMessenger.of(context).showSnackBar(

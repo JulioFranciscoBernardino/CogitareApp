@@ -145,10 +145,13 @@ router.put('/:id', authenticateToken, async (req, res) => {
 router.get('/', authenticateToken, async (req, res) => {
   try {
     const cuidadores = await db.query(
-      `SELECT c.id, c.nome, c.email, c.telefone, c.cpf, c.data_nascimento,
-              e.logradouro, e.numero, e.bairro, e.cidade, e.estado, e.cep
+      `SELECT c.IdCuidador as id, c.Nome as nome, c.Email as email, c.Telefone as telefone, c.Cpf as cpf, c.DataNascimento as data_nascimento,
+              c.FotoUrl as foto_url, c.Biografia as biografia, c.Fumante as fumante, c.TemFilhos as tem_filhos, 
+              c.PossuiCNH as possui_cnh, c.TemCarro as tem_carro,
+              e.IdEndereco as endereco_id, e.Cidade as cidade, e.Bairro as bairro, e.Rua as logradouro, 
+              e.Numero as numero, e.Complemento as complemento, e.Cep as cep
        FROM cuidador c 
-       LEFT JOIN endereco e ON c.endereco_id = e.id`
+       LEFT JOIN endereco e ON c.IdEndereco = e.IdEndereco`
     );
 
     res.json({

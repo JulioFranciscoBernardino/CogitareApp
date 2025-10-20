@@ -1,12 +1,12 @@
-import '../models/caregiver.dart';
-import '../models/address.dart';
-import 'api_service.dart';
+import '../models/cuidador.dart';
+import '../models/endereco.dart';
+import 'servico_api.dart';
 
-class CaregiverService {
+class ServicoCuidador {
   // Criar endereço via API
-  static Future<Map<String, dynamic>> createAddress(Address address) async {
+  static Future<Map<String, dynamic>> createEndereco(Endereco address) async {
     try {
-      final response = await ApiService.post('/api/endereco', {
+      final response = await ServicoApi.post('/api/endereco', {
         'logradouro': address.street,
         'numero': address.number,
         'complemento': address.complement,
@@ -37,10 +37,9 @@ class CaregiverService {
   }
 
   // Criar cuidador via API
-  static Future<Map<String, dynamic>> createCaregiver(
-      Caregiver caregiver) async {
+  static Future<Map<String, dynamic>> createCuidador(Cuidador caregiver) async {
     try {
-      final response = await ApiService.post('/api/cuidador', {
+      final response = await ServicoApi.post('/api/cuidador', {
         'nome': caregiver.name,
         'email': caregiver.email,
         'senha': caregiver.password,
@@ -72,12 +71,12 @@ class CaregiverService {
 
   // Criar cuidador completo (endereço + cuidador) via API
   static Future<Map<String, dynamic>> createComplete({
-    required Address address,
-    required Caregiver caregiver,
+    required Endereco address,
+    required Cuidador caregiver,
   }) async {
     try {
       // Primeiro criar o endereço
-      final addressResult = await createAddress(address);
+      final addressResult = await createEndereco(address);
 
       if (!addressResult['success']) {
         return addressResult;
@@ -87,7 +86,7 @@ class CaregiverService {
       caregiver = caregiver.copyWith(addressId: addressResult['addressId']);
 
       // Criar o cuidador
-      final caregiverResult = await createCaregiver(caregiver);
+      final caregiverResult = await createCuidador(caregiver);
 
       if (!caregiverResult['success']) {
         return caregiverResult;
@@ -108,13 +107,13 @@ class CaregiverService {
   }
 
   // Listar cuidadores via API
-  static Future<List<Caregiver>> listCaregivers() async {
+  static Future<List<Cuidador>> listCuidadors() async {
     try {
-      final response = await ApiService.get('/api/cuidador');
+      final response = await ServicoApi.get('/api/cuidador');
 
       if (response['success']) {
         final List<dynamic> data = response['data'];
-        return data.map((json) => Caregiver.fromJson(json)).toList();
+        return data.map((json) => Cuidador.fromJson(json)).toList();
       } else {
         throw Exception(response['message'] ?? 'Erro ao listar cuidadores');
       }
@@ -124,12 +123,12 @@ class CaregiverService {
   }
 
   // Buscar cuidador por ID via API
-  static Future<Caregiver?> getCaregiverById(int id) async {
+  static Future<Cuidador?> getCuidadorById(int id) async {
     try {
-      final response = await ApiService.get('/api/cuidador/$id');
+      final response = await ServicoApi.get('/api/cuidador/$id');
 
       if (response['success']) {
-        return Caregiver.fromJson(response['data']);
+        return Cuidador.fromJson(response['data']);
       } else {
         return null;
       }
@@ -139,10 +138,10 @@ class CaregiverService {
   }
 
   // Atualizar cuidador via API
-  static Future<Map<String, dynamic>> updateCaregiver(
-      int id, Caregiver caregiver) async {
+  static Future<Map<String, dynamic>> updateCuidador(
+      int id, Cuidador caregiver) async {
     try {
-      final response = await ApiService.put('/api/cuidador/$id', {
+      final response = await ServicoApi.put('/api/cuidador/$id', {
         'nome': caregiver.name,
         'telefone': caregiver.phone,
         'cpf': caregiver.cpf,

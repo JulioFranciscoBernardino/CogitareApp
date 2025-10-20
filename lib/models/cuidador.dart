@@ -1,4 +1,4 @@
-class Caregiver {
+class Cuidador {
   final int? id;
   final int? addressId;
   final String? cpf;
@@ -14,7 +14,7 @@ class Caregiver {
   final String? hasDrivingLicense;
   final String? hasCar;
 
-  Caregiver({
+  Cuidador({
     this.id,
     this.addressId,
     this.cpf,
@@ -33,44 +33,44 @@ class Caregiver {
 
   Map<String, dynamic> toJson() {
     return {
-      'IdEndereco': addressId,
-      'Cpf': cpf,
-      'Nome': name,
-      'Email': email,
-      'Telefone': phone,
-      'Senha': password,
-      'DataNascimento': birthDate?.toIso8601String().split('T')[0],
-      'FotoUrl': photoUrl,
-      'Biografia': biography,
-      'Fumante': smokes,
-      'TemFilhos': hasChildren,
-      'PossuiCNH': hasDrivingLicense,
-      'TemCarro': hasCar,
+      'endereco_id': addressId,
+      'cpf': cpf,
+      'nome': name,
+      'email': email,
+      'telefone': phone,
+      'senha': password,
+      'data_nascimento': birthDate?.toIso8601String().split('T')[0],
+      'foto_url': photoUrl,
+      'biografia': biography,
+      'fumante': smokes,
+      'tem_filhos': hasChildren,
+      'possui_cnh': hasDrivingLicense,
+      'tem_carro': hasCar,
     };
   }
 
-  factory Caregiver.fromJson(Map<String, dynamic> json) {
-    return Caregiver(
-      id: json['IdCuidador'],
-      addressId: json['IdEndereco'],
-      cpf: json['Cpf'],
-      name: json['Nome'],
-      email: json['Email'],
-      phone: json['Telefone'],
-      password: json['Senha'],
-      birthDate: json['DataNascimento'] != null
-          ? DateTime.parse(json['DataNascimento'])
+  factory Cuidador.fromJson(Map<String, dynamic> json) {
+    return Cuidador(
+      id: json['id'],
+      addressId: json['endereco_id'],
+      cpf: json['cpf'],
+      name: json['nome'],
+      email: json['email'],
+      phone: json['telefone'],
+      password: json['senha'],
+      birthDate: json['data_nascimento'] != null
+          ? DateTime.parse(json['data_nascimento'])
           : null,
-      photoUrl: json['FotoUrl'],
-      biography: json['Biografia'],
-      smokes: json['Fumante'],
-      hasChildren: json['TemFilhos'],
-      hasDrivingLicense: json['PossuiCNH'],
-      hasCar: json['TemCarro'],
+      photoUrl: json['foto_url'],
+      biography: json['biografia'],
+      smokes: json['fumante'],
+      hasChildren: json['tem_filhos'],
+      hasDrivingLicense: json['possui_cnh'],
+      hasCar: json['tem_carro'],
     );
   }
 
-  Caregiver copyWith({
+  Cuidador copyWith({
     int? id,
     int? addressId,
     String? cpf,
@@ -86,7 +86,7 @@ class Caregiver {
     String? hasDrivingLicense,
     String? hasCar,
   }) {
-    return Caregiver(
+    return Cuidador(
       id: id ?? this.id,
       addressId: addressId ?? this.addressId,
       cpf: cpf ?? this.cpf,

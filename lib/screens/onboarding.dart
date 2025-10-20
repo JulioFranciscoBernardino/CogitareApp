@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'role_selection.dart';
+import 'selecao_papel.dart';
+import '../services/servico_autenticacao.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -289,11 +290,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                // Marcar onboarding como visto
+                await ServicoAutenticacao.markOnboardingSeen();
+
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(
-                      builder: (_) => const RoleSelectionScreen()),
+                  MaterialPageRoute(builder: (_) => const SelecaoPapel()),
                 );
               },
               style: ElevatedButton.styleFrom(

@@ -1,12 +1,12 @@
-import '../models/guardian.dart';
-import '../models/address.dart';
-import 'api_service.dart';
+import '../models/responsavel.dart';
+import '../models/endereco.dart';
+import 'servico_api.dart';
 
-class ResponsavelApiService {
+class ServicoApiResponsavel {
   // Cadastrar endereço via API
-  static Future<Map<String, dynamic>> createAddress(Address address) async {
+  static Future<Map<String, dynamic>> createEndereco(Endereco address) async {
     try {
-      final response = await ApiService.post('/api/responsavel/endereco', {
+      final response = await ServicoApi.post('/api/responsavel/endereco', {
         'cidade': address.city,
         'bairro': address.neighborhood,
         'rua': address.street,
@@ -22,9 +22,10 @@ class ResponsavelApiService {
   }
 
   // Cadastrar responsável via API
-  static Future<Map<String, dynamic>> createGuardian(Guardian guardian) async {
+  static Future<Map<String, dynamic>> createResponsavel(
+      Responsavel guardian) async {
     try {
-      final response = await ApiService.post('/api/responsavel', {
+      final response = await ServicoApi.post('/api/responsavel', {
         'idEndereco': guardian.addressId,
         'cpf': guardian.cpf,
         'nome': guardian.name,
@@ -43,11 +44,11 @@ class ResponsavelApiService {
 
   // Cadastro completo via API (endereço + responsável em uma requisição)
   static Future<Map<String, dynamic>> createComplete({
-    required Address address,
-    required Guardian guardian,
+    required Endereco address,
+    required Responsavel guardian,
   }) async {
     try {
-      final response = await ApiService.post('/api/responsavel/completo', {
+      final response = await ServicoApi.post('/api/responsavel/completo', {
         // Dados do endereço
         'cidade': address.city,
         'bairro': address.neighborhood,
@@ -72,13 +73,13 @@ class ResponsavelApiService {
   }
 
   // Listar responsáveis via API
-  static Future<List<Guardian>> listGuardians() async {
+  static Future<List<Responsavel>> listResponsavels() async {
     try {
-      final response = await ApiService.get('/api/responsavel');
+      final response = await ServicoApi.get('/api/responsavel');
 
       if (response['success'] == true) {
         final List<dynamic> data = response['data'];
-        return data.map((json) => Guardian.fromJson(json)).toList();
+        return data.map((json) => Responsavel.fromJson(json)).toList();
       } else {
         return [];
       }
@@ -89,12 +90,12 @@ class ResponsavelApiService {
   }
 
   // Buscar responsável por ID via API
-  static Future<Guardian?> getGuardianById(int id) async {
+  static Future<Responsavel?> getResponsavelById(int id) async {
     try {
-      final response = await ApiService.get('/api/responsavel/$id');
+      final response = await ServicoApi.get('/api/responsavel/$id');
 
       if (response['success'] == true) {
-        return Guardian.fromJson(response['data']);
+        return Responsavel.fromJson(response['data']);
       } else {
         return null;
       }

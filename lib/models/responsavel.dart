@@ -1,4 +1,4 @@
-class Guardian {
+class Responsavel {
   final int? id;
   final int? addressId;
   final String? cpf;
@@ -9,7 +9,7 @@ class Guardian {
   final String? photoUrl;
   final String? password;
 
-  Guardian({
+  Responsavel({
     this.id,
     this.addressId,
     this.cpf,
@@ -33,8 +33,8 @@ class Guardian {
     };
   }
 
-  factory Guardian.fromJson(Map<String, dynamic> json) {
-    return Guardian(
+  factory Responsavel.fromJson(Map<String, dynamic> json) {
+    return Responsavel(
       id: json['IdResponsavel'],
       addressId: json['IdEndereco'],
       cpf: json['Cpf'],
@@ -48,7 +48,7 @@ class Guardian {
     );
   }
 
-  Guardian copyWith({
+  Responsavel copyWith({
     int? id,
     int? addressId,
     String? cpf,
@@ -59,7 +59,7 @@ class Guardian {
     String? photoUrl,
     String? password,
   }) {
-    return Guardian(
+    return Responsavel(
       id: id ?? this.id,
       addressId: addressId ?? this.addressId,
       cpf: cpf ?? this.cpf,

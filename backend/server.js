@@ -10,6 +10,8 @@ const cuidadorRoutes = require('./routes/cuidador');
 const idosoRoutes = require('./routes/idoso');
 const enderecoRoutes = require('./routes/endereco');
 const responsavelRoutes = require('./routes/responsavel');
+const nearbyCaregiversRoutes = require('./routes/nearby_caregivers');
+const contractsRoutes = require('./routes/contracts');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -51,6 +53,8 @@ app.use('/api/cuidador', cuidadorRoutes);
 app.use('/api/idoso', idosoRoutes);
 app.use('/api/endereco', enderecoRoutes);
 app.use('/api/responsavel', responsavelRoutes);
+app.use('/api/nearby-caregivers', nearbyCaregiversRoutes);
+app.use('/api/contracts', contractsRoutes);
 
 // Rota de health check
 app.get('/api/health', (req, res) => {

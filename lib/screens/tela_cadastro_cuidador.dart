@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../widgets/common.dart';
-import '../models/caregiver.dart';
-import '../models/address.dart';
-import '../services/caregiver_service.dart';
-import '../utils/validators.dart';
-import 'success_screen.dart';
+import '../widgets/widgets_comuns.dart';
+import '../models/cuidador.dart';
+import '../models/endereco.dart';
+import '../services/servico_cuidador.dart';
+import '../utils/validadores.dart';
+import 'tela_sucesso.dart';
 
-class CaregiverSignupScreen extends StatefulWidget {
-  static const route = '/signup/caregiver';
-  const CaregiverSignupScreen({super.key});
+class TelaCadastroCuidador extends StatefulWidget {
+  static const route = '/cadastro-cuidador';
+  const TelaCadastroCuidador({super.key});
 
   @override
-  State<CaregiverSignupScreen> createState() => _CaregiverSignupScreenState();
+  State<TelaCadastroCuidador> createState() => _TelaCadastroCuidadorState();
 }
 
-class _CaregiverSignupScreenState extends State<CaregiverSignupScreen> {
+class _TelaCadastroCuidadorState extends State<TelaCadastroCuidador> {
   final page = PageController();
   int index = 0;
   bool isLoading = false;
@@ -134,7 +134,7 @@ class _CaregiverSignupScreenState extends State<CaregiverSignupScreen> {
 
     try {
       // Create address
-      final address = Address(
+      final address = Endereco(
         city: cityController.text,
         neighborhood: neighborhoodController.text,
         street: streetController.text,
@@ -144,7 +144,7 @@ class _CaregiverSignupScreenState extends State<CaregiverSignupScreen> {
       );
 
       // Create caregiver
-      final caregiver = Caregiver(
+      final caregiver = Cuidador(
         cpf: cpfController.text,
         name: nameController.text,
         email: emailController.text,
@@ -159,13 +159,13 @@ class _CaregiverSignupScreenState extends State<CaregiverSignupScreen> {
       );
 
       // Create caregiver
-      final response = await CaregiverService.createComplete(
+      final response = await ServicoCuidador.createComplete(
         address: address,
         caregiver: caregiver,
       );
 
       if (response['success'] == true) {
-        Navigator.pushReplacementNamed(context, SuccessScreen.route,
+        Navigator.pushReplacementNamed(context, TelaSucesso.route,
             arguments: "Cadastro do cuidador realizado com sucesso!");
       } else {
         _showErrorDialog(

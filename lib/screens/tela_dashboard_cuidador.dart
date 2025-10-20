@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import '../services/servico_autenticacao.dart';
 
-class ResponsavelDashboardScreen extends StatelessWidget {
-  static const route = '/responsavel-dashboard';
-  const ResponsavelDashboardScreen({super.key});
+class TelaDashboardCuidador extends StatefulWidget {
+  static const route = '/dashboard-cuidador';
+  const TelaDashboardCuidador({super.key});
 
+  @override
+  State<TelaDashboardCuidador> createState() => _TelaDashboardCuidadorState();
+}
+
+class _TelaDashboardCuidadorState extends State<TelaDashboardCuidador> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,10 +32,7 @@ class ResponsavelDashboardScreen extends StatelessWidget {
                   const Spacer(),
                   // Botão de perfil/logout
                   IconButton(
-                    onPressed: () {
-                      // Implementar logout
-                      Navigator.pushReplacementNamed(context, '/unified-login');
-                    },
+                    onPressed: _handleLogout,
                     icon: const Icon(Icons.logout, color: Colors.black87),
                   ),
                 ],
@@ -45,7 +48,7 @@ class ResponsavelDashboardScreen extends StatelessWidget {
                   children: [
                     // Mensagem de boas-vindas
                     const Text(
-                      'Bem-vindo(a), Responsável!',
+                      'Bem-vindo(a), Cuidador!',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -56,7 +59,7 @@ class ResponsavelDashboardScreen extends StatelessWidget {
                     const SizedBox(height: 8),
 
                     const Text(
-                      'Gerencie os cuidados da sua família com carinho.',
+                      'Conecte-se com famílias que precisam do seu cuidado.',
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.grey,
@@ -73,11 +76,10 @@ class ResponsavelDashboardScreen extends StatelessWidget {
                         mainAxisSpacing: 16,
                         children: [
                           _buildFeatureCard(
-                            icon: Icons.person_add,
-                            title: 'Cadastrar Idoso',
-                            subtitle: 'Adicione um familiar',
+                            icon: Icons.work,
+                            title: 'Meus Serviços',
+                            subtitle: 'Gerencie ofertas',
                             onTap: () {
-                              // Navegar para cadastro de idoso
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content:
@@ -87,25 +89,10 @@ class ResponsavelDashboardScreen extends StatelessWidget {
                             },
                           ),
                           _buildFeatureCard(
-                            icon: Icons.search,
-                            title: 'Buscar Cuidador',
-                            subtitle: 'Encontre profissionais',
+                            icon: Icons.calendar_month,
+                            title: 'Agenda',
+                            subtitle: 'Seus agendamentos',
                             onTap: () {
-                              // Navegar para busca de cuidadores
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content:
-                                      Text('Funcionalidade em desenvolvimento'),
-                                ),
-                              );
-                            },
-                          ),
-                          _buildFeatureCard(
-                            icon: Icons.calendar_today,
-                            title: 'Agendamentos',
-                            subtitle: 'Gerencie horários',
-                            onTap: () {
-                              // Navegar para agendamentos
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content:
@@ -117,9 +104,21 @@ class ResponsavelDashboardScreen extends StatelessWidget {
                           _buildFeatureCard(
                             icon: Icons.message,
                             title: 'Conversas',
-                            subtitle: 'Chat com cuidadores',
+                            subtitle: 'Chat com responsáveis',
                             onTap: () {
-                              // Navegar para conversas
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content:
+                                      Text('Funcionalidade em desenvolvimento'),
+                                ),
+                              );
+                            },
+                          ),
+                          _buildFeatureCard(
+                            icon: Icons.analytics,
+                            title: 'Relatórios',
+                            subtitle: 'Suas estatísticas',
+                            onTap: () {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content:
@@ -189,5 +188,48 @@ class ResponsavelDashboardScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _handleLogout() async {
+    // Mostrar diálogo de confirmação
+    final bool? shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Sair'),
+          content: const Text('Tem certeza que deseja sair da sua conta?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Sair'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldLogout == true) {
+      // Limpar dados de login
+      await ServicoAutenticacao.clearLoginData();
+
+      // Navegar para tela de seleção de papel
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/role-selection',
+        (route) => false,
+      );
+
+      // Mostrar mensagem de sucesso
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Logout realizado com sucesso'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    }
   }
 }

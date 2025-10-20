@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import '../services/servico_autenticacao.dart';
 
-class SuccessScreen extends StatelessWidget {
-  static const route = '/success';
-  const SuccessScreen({super.key});
+class TelaSucesso extends StatelessWidget {
+  static const route = '/sucesso';
+  const TelaSucesso({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +38,9 @@ class SuccessScreen extends StatelessWidget {
               ),
               const SizedBox(height: 32),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
+                  // Limpar flag de processo de cadastro ao completar
+                  await ServicoAutenticacao.clearSignupProcess();
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     '/',
                     (route) => false,
