@@ -94,6 +94,23 @@ class _TelaDashboardResponsavelState extends State<TelaDashboardResponsavel> {
                       size: 24,
                     ),
                   ),
+                  // Botão temporário para limpar dados (DEBUG)
+                  IconButton(
+                    onPressed: () async {
+                      await ServicoAutenticacao.clearAllData();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Dados limpos! Reinicie o app.'),
+                          backgroundColor: Colors.orange,
+                        ),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.clear_all,
+                      color: Colors.orange,
+                      size: 24,
+                    ),
+                  ),
                   // Botão de logout
                   IconButton(
                     onPressed: _handleLogout,
@@ -179,7 +196,7 @@ class _TelaDashboardResponsavelState extends State<TelaDashboardResponsavel> {
                         suggestedCaregivers: _suggestedCaregivers,
                         onViewAllTap: () {
                           // Navegar para tela de cuidadores próximos
-                          Navigator.pushNamed(context, '/nearby-caregivers');
+                          Navigator.pushNamed(context, '/cuidadores-proximos');
                         },
                         onCaregiverTap: (caregiver) {
                           // Navegar para detalhes do cuidador
@@ -431,7 +448,7 @@ class _TelaDashboardResponsavelState extends State<TelaDashboardResponsavel> {
       // Navegar para tela de seleção de papel
       Navigator.pushNamedAndRemoveUntil(
         context,
-        '/role-selection',
+        '/selecao-papel',
         (route) => false,
       );
 

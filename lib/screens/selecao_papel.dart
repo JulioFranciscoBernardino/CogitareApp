@@ -11,6 +11,8 @@ class SelecaoPapel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -186,7 +188,7 @@ class SelecaoPapel extends StatelessWidget {
 
             // Home indicator (simulado)
             Container(
-              margin: const EdgeInsets.only(bottom: 8),
+              margin: EdgeInsets.only(bottom: bottomPadding + 20),
               width: 134,
               height: 5,
               decoration: BoxDecoration(

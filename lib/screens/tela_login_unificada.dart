@@ -21,6 +21,8 @@ class _TelaLoginUnificadaState extends State<TelaLoginUnificada> {
 
   @override
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -398,7 +400,7 @@ class _TelaLoginUnificadaState extends State<TelaLoginUnificada> {
 
             // Home indicator
             Container(
-              margin: const EdgeInsets.only(bottom: 8),
+              margin: EdgeInsets.only(bottom: bottomPadding + 20),
               width: 134,
               height: 5,
               decoration: BoxDecoration(

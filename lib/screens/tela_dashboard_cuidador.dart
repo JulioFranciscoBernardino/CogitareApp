@@ -219,7 +219,7 @@ class _TelaDashboardCuidadorState extends State<TelaDashboardCuidador> {
       // Navegar para tela de seleção de papel
       Navigator.pushNamedAndRemoveUntil(
         context,
-        '/role-selection',
+        '/selecao-papel',
         (route) => false,
       );
 

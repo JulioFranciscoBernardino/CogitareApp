@@ -213,7 +213,8 @@ class _TelaCadastroResponsavelState extends State<TelaCadastroResponsavel> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: EdgeInsets.fromLTRB(
+              24, 24, 24, MediaQuery.of(context).padding.bottom + 60),
           child: Column(
             children: [
               TextFormField(

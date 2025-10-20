@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/tela_carregamento.dart';
+import 'widgets/verificador_inicial.dart';
 import 'screens/selecao_papel.dart';
 import 'screens/tela_login_unificada.dart';
 import 'screens/tela_cadastro_cuidador.dart';
@@ -64,15 +64,13 @@ class CogitareApp extends StatelessWidget {
     );
 
     return MaterialApp(
-      home: const TelaCarregamento(),
+      home: const VerificadorInicial(),
       debugShowCheckedModeBanner: false,
       title: 'COGITARE',
       theme: theme,
-      initialRoute: TelaCarregamento.route,
       routes: {
-        TelaCarregamento.route: (_) => const TelaCarregamento(),
         '/onboarding': (_) => const OnboardingScreen(),
-        '/role-selection': (_) => const SelecaoPapel(),
+        '/selecao-papel': (_) => const SelecaoPapel(),
         TelaLoginUnificada.route: (_) => const TelaLoginUnificada(),
         TelaCadastroCuidador.route: (_) => const TelaCadastroCuidador(),
         TelaCadastroResponsavel.route: (_) => const TelaCadastroResponsavel(),

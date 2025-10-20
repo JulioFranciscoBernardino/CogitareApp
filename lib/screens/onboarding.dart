@@ -53,121 +53,116 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PageView.builder(
-        controller: _pageController,
-        onPageChanged: (index) => setState(() => _currentPage = index),
-        itemCount: onboardingData.length + 1, // +1 para tela final
-        itemBuilder: (context, index) {
-          if (index == onboardingData.length) {
-            // Tela final - Vamos começar!
-            return _buildWelcomeScreen();
-          }
+      body: SafeArea(
+        child: PageView.builder(
+          controller: _pageController,
+          onPageChanged: (index) => setState(() => _currentPage = index),
+          itemCount: onboardingData.length + 1, // +1 para tela final
+          itemBuilder: (context, index) {
+            if (index == onboardingData.length) {
+              // Tela final - Vamos começar!
+              return _buildWelcomeScreen();
+            }
 
-          final data = onboardingData[index];
-          return Container(
-            color: Colors.white,
-            child: Column(
-              children: [
-                // Cabeçalho com logo e botão Pular
-                _buildHeader(),
+            final data = onboardingData[index];
+            return Container(
+              color: Colors.white,
+              child: Column(
+                children: [
+                  // Cabeçalho com logo e botão Pular
+                  _buildHeader(),
 
-                // Conteúdo principal
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 20),
-
-                        // Título principal
-                        Text(
-                          data["title"] as String,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF28323C),
-                          ),
-                        ),
-
-                        const SizedBox(height: 16),
-
-                        // Subtítulo
-                        if (data["subtitle"] != null &&
-                            (data["subtitle"] as String).isNotEmpty)
+                  // Conteúdo principal
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          // Título principal
                           Text(
-                            data["subtitle"] as String,
+                            data["title"] as String,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                              height: 1.4,
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF28323C),
                             ),
                           ),
 
-                        // Lista de benefícios
-                        if (data["benefits"] != null &&
-                            (data["benefits"] as List).isNotEmpty) ...[
-                          const SizedBox(height: 24),
-                          ...((data["benefits"] as List)
-                              .map((benefit) => Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(vertical: 4),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          "• ",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                            benefit as String,
-                                            style: const TextStyle(
+                          // Subtítulo
+                          if (data["subtitle"] != null &&
+                              (data["subtitle"] as String).isNotEmpty)
+                            Text(
+                              data["subtitle"] as String,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Colors.grey,
+                                height: 1.4,
+                              ),
+                            ),
+
+                          // Lista de benefícios
+                          if (data["benefits"] != null &&
+                              (data["benefits"] as List).isNotEmpty) ...[
+                            const SizedBox(height: 24),
+                            ...((data["benefits"] as List)
+                                .map((benefit) => Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 4),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            "• ",
+                                            style: TextStyle(
                                               fontSize: 16,
                                               color: Colors.grey,
-                                              height: 1.4,
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ))),
-                        ],
+                                          Expanded(
+                                            child: Text(
+                                              benefit as String,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.grey,
+                                                height: 1.4,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ))),
+                          ],
 
-                        const SizedBox(height: 30),
-
-                        // Imagem
-                        if (data["image"] != null)
-                          SizedBox(
-                            width: double.infinity,
-                            child: Image.asset(
-                              data["image"] as String,
-                              fit: BoxFit.fitWidth,
+                          // Imagem
+                          if (data["image"] != null)
+                            SizedBox(
+                              width: double.infinity,
+                              child: Image.asset(
+                                data["image"] as String,
+                                fit: BoxFit.fitWidth,
+                              ),
                             ),
-                          ),
-
-                        const SizedBox(height: 20),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          );
-        },
+                ],
+              ),
+            );
+          },
+        ),
       ),
-      bottomNavigationBar: _buildDots(),
+      bottomNavigationBar: _buildDots(context),
     );
   }
 
   Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(24, 50, 24, 20),
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
       child: Row(
         children: [
           // Logo horizontal
@@ -212,19 +207,23 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  Widget _buildDots() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(
-        onboardingData.length,
-        (index) => AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 20),
-          height: 8,
-          width: _currentPage == index ? 24 : 8,
-          decoration: BoxDecoration(
-            color: _currentPage == index ? Colors.blue : Colors.grey,
-            borderRadius: BorderRadius.circular(12),
+  Widget _buildDots(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    return Container(
+      padding: EdgeInsets.only(bottom: bottomPadding + 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(
+          onboardingData.length,
+          (index) => AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            height: 8,
+            width: _currentPage == index ? 24 : 8,
+            decoration: BoxDecoration(
+              color: _currentPage == index ? Colors.blue : Colors.grey,
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         ),
       ),
@@ -256,7 +255,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           ),
 
           // Botão e textos inferiores
-          _buildWelcomeFooter(),
+          _buildWelcomeFooter(context),
         ],
       ),
     );
@@ -264,7 +263,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   Widget _buildWelcomeHeader() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(24, 50, 24, 20),
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
       child: Row(
         children: [
           // Logo horizontal
@@ -281,9 +280,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  Widget _buildWelcomeFooter() {
+  Widget _buildWelcomeFooter(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
     return Container(
-      padding: const EdgeInsets.fromLTRB(24, 20, 24, 40),
+      padding: EdgeInsets.fromLTRB(24, 20, 24, bottomPadding + 40),
       child: Column(
         children: [
           // Botão principal
@@ -332,7 +332,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 WidgetSpan(
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.pushReplacementNamed(context, '/unified-login');
+                      Navigator.pushReplacementNamed(
+                          context, '/login-unificado');
                     },
                     child: const Text(
                       "Faça login.",

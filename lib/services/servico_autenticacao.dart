@@ -97,6 +97,8 @@ class ServicoAutenticacao {
       await prefs.remove(_userTypeKey);
       await prefs.remove(_userDataKey);
       await prefs.remove(_tokenKey);
+      await prefs
+          .remove('in_signup_process'); // Limpar flag de processo de cadastro
 
       print('Dados de login limpos com sucesso');
     } catch (e) {
@@ -192,16 +194,7 @@ class ServicoAutenticacao {
       final flag = prefs.getBool('in_signup_process') ?? false;
       print('🔍 Flag de processo de cadastro: $flag');
 
-      // Verificação adicional: se tem dados de usuário mas não está logado
-      final hasUserData = prefs.getString(_userDataKey) != null;
-      final isLoggedIn = prefs.getBool(_isLoggedInKey) ?? false;
-      final inProcess = flag || (hasUserData && !isLoggedIn);
-
-      print('🔍 Tem dados de usuário: $hasUserData');
-      print('🔍 Está logado: $isLoggedIn');
-      print('🔍 Em processo de cadastro (final): $inProcess');
-
-      return inProcess;
+      return flag;
     } catch (e) {
       print('Erro ao verificar processo de cadastro: $e');
       return false;
@@ -219,20 +212,25 @@ class ServicoAutenticacao {
     }
   }
 
+  // Limpar dados de processo de cadastro especificamente
+  static Future<void> clearSignupData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('in_signup_process');
+      print('Dados de processo de cadastro limpos com sucesso');
+    } catch (e) {
+      print('Erro ao limpar dados de processo de cadastro: $e');
+    }
+  }
+
   // Obter rota inicial baseada no status de login
   static Future<String> getInitialRoute() async {
     try {
       final isLoggedIn = await ServicoAutenticacao.isLoggedIn();
-      final isFirstTime = await ServicoAutenticacao.isFirstTime();
 
-      // Se não está logado e é primeira vez, vai para onboarding
-      if (!isLoggedIn && isFirstTime) {
+      // Se não está logado, sempre vai para tela de onboarding
+      if (!isLoggedIn) {
         return '/onboarding';
-      }
-
-      // Se não está logado mas já viu onboarding, vai para seleção de papel
-      if (!isLoggedIn && !isFirstTime) {
-        return '/role-selection';
       }
 
       // Se está logado, vai para dashboard baseado no tipo
@@ -245,11 +243,11 @@ class ServicoAutenticacao {
         }
       }
 
-      // Fallback para seleção de papel
-      return '/role-selection';
+      // Fallback para tela de onboarding
+      return '/onboarding';
     } catch (e) {
       print('Erro ao determinar rota inicial: $e');
-      return '/role-selection';
+      return '/onboarding';
     }
   }
 }
