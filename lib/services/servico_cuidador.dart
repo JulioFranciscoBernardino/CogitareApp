@@ -7,12 +7,11 @@ class ServicoCuidador {
   static Future<Map<String, dynamic>> createEndereco(Endereco address) async {
     try {
       final response = await ServicoApi.post('/api/endereco', {
-        'logradouro': address.street,
+        'rua': address.street,
         'numero': address.number,
         'complemento': address.complement,
         'bairro': address.neighborhood,
         'cidade': address.city,
-        'estado': 'SP', // Default state, can be made configurable
         'cep': address.zipCode,
       });
 
@@ -47,6 +46,12 @@ class ServicoCuidador {
         'cpf': caregiver.cpf,
         'data_nascimento': caregiver.birthDate?.toIso8601String().split('T')[0],
         'endereco_id': caregiver.addressId,
+        'fumante': caregiver.smokingStatus,
+        'tem_filhos': caregiver.hasChildren,
+        'possui_cnh': caregiver.hasLicense,
+        'tem_carro': caregiver.hasCar,
+        'biografia': caregiver.biography,
+        'valor_hora': caregiver.hourlyRate,
       });
 
       if (response['success']) {

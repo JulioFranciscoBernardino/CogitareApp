@@ -7,20 +7,33 @@ const router = express.Router();
 // Criar endereço
 router.post('/', async (req, res) => {
   try {
+    console.log('Dados recebidos:', req.body);
+    
     const {
-      logradouro,
+      rua,
       numero,
       complemento,
       bairro,
       cidade,
-      estado,
       cep
     } = req.body;
 
+    // Tratar valores undefined como null
+    const ruaValue = rua || null;
+    const numeroValue = numero || null;
+    const complementoValue = complemento || null;
+    const bairroValue = bairro || null;
+    const cidadeValue = cidade || null;
+    const cepValue = cep || null;
+    
+    console.log('Valores tratados:', {
+      ruaValue, numeroValue, complementoValue, bairroValue, cidadeValue, cepValue
+    });
+
     const result = await db.query(
-      `INSERT INTO endereco (logradouro, numero, complemento, bairro, cidade, estado, cep) 
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [logradouro, numero, complemento, bairro, cidade, estado, cep]
+      `INSERT INTO endereco (Rua, Numero, Complemento, Bairro, Cidade, Cep) 
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [ruaValue, numeroValue, complementoValue, bairroValue, cidadeValue, cepValue]
     );
 
     res.status(201).json({
@@ -46,7 +59,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
 
     const enderecos = await db.query(
-      'SELECT * FROM endereco WHERE id = ?',
+      'SELECT * FROM endereco WHERE IdEndereco = ?',
       [id]
     );
 
@@ -76,18 +89,25 @@ router.put('/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const {
-      logradouro,
+      rua,
       numero,
       complemento,
       bairro,
       cidade,
-      estado,
       cep
     } = req.body;
 
+    // Tratar valores undefined como null
+    const ruaValue = rua || null;
+    const numeroValue = numero || null;
+    const complementoValue = complemento || null;
+    const bairroValue = bairro || null;
+    const cidadeValue = cidade || null;
+    const cepValue = cep || null;
+
     // Verificar se endereço existe
     const existingEndereco = await db.query(
-      'SELECT id FROM endereco WHERE id = ?',
+      'SELECT IdEndereco FROM endereco WHERE IdEndereco = ?',
       [id]
     );
 
@@ -101,10 +121,10 @@ router.put('/:id', authenticateToken, async (req, res) => {
     // Atualizar endereço
     await db.query(
       `UPDATE endereco SET 
-       logradouro = ?, numero = ?, complemento = ?, bairro = ?, 
-       cidade = ?, estado = ?, cep = ?
-       WHERE id = ?`,
-      [logradouro, numero, complemento, bairro, cidade, estado, cep, id]
+       Rua = ?, Numero = ?, Complemento = ?, Bairro = ?, 
+       Cidade = ?, Cep = ?
+       WHERE IdEndereco = ?`,
+      [ruaValue, numeroValue, complementoValue, bairroValue, cidadeValue, cepValue, id]
     );
 
     res.json({

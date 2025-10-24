@@ -20,24 +20,24 @@ class Endereco {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'city': city,
-      'neighborhood': neighborhood,
-      'street': street,
-      'number': number,
-      'complement': complement,
-      'zipCode': zipCode,
+      'cidade': city,
+      'bairro': neighborhood,
+      'rua': street,
+      'numero': number,
+      'complemento': complement,
+      'cep': zipCode,
     };
   }
 
   factory Endereco.fromJson(Map<String, dynamic> json) {
     return Endereco(
-      id: json['id'],
-      city: json['city'] ?? '',
-      neighborhood: json['neighborhood'] ?? '',
-      street: json['street'] ?? '',
-      number: json['number'] ?? '',
-      complement: json['complement'],
-      zipCode: json['zipCode'] ?? '',
+      id: json['IdEndereco'] ?? json['id'],
+      city: json['Cidade'] ?? json['city'] ?? '',
+      neighborhood: json['Bairro'] ?? json['neighborhood'] ?? '',
+      street: json['Rua'] ?? json['street'] ?? '',
+      number: json['Numero'] ?? json['number'] ?? '',
+      complement: json['Complemento'] ?? json['complement'],
+      zipCode: json['Cep'] ?? json['zipCode'] ?? '',
     );
   }
 

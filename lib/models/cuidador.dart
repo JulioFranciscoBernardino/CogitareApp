@@ -9,10 +9,11 @@ class Cuidador {
   final DateTime? birthDate;
   final String? photoUrl;
   final String? biography;
-  final String? smokes;
+  final String? smokingStatus;
   final String? hasChildren;
-  final String? hasDrivingLicense;
+  final String? hasLicense;
   final String? hasCar;
+  final String? hourlyRate;
 
   Cuidador({
     this.id,
@@ -25,10 +26,11 @@ class Cuidador {
     this.birthDate,
     this.photoUrl,
     this.biography,
-    this.smokes = 'Não',
+    this.smokingStatus = 'Não',
     this.hasChildren = 'Não',
-    this.hasDrivingLicense = 'Não',
+    this.hasLicense = 'Não',
     this.hasCar = 'Não',
+    this.hourlyRate,
   });
 
   Map<String, dynamic> toJson() {
@@ -42,10 +44,11 @@ class Cuidador {
       'data_nascimento': birthDate?.toIso8601String().split('T')[0],
       'foto_url': photoUrl,
       'biografia': biography,
-      'fumante': smokes,
+      'fumante': smokingStatus,
       'tem_filhos': hasChildren,
-      'possui_cnh': hasDrivingLicense,
+      'possui_cnh': hasLicense,
       'tem_carro': hasCar,
+      'valor_hora': hourlyRate,
     };
   }
 
@@ -63,10 +66,11 @@ class Cuidador {
           : null,
       photoUrl: json['foto_url'],
       biography: json['biografia'],
-      smokes: json['fumante'],
+      smokingStatus: json['fumante'],
       hasChildren: json['tem_filhos'],
-      hasDrivingLicense: json['possui_cnh'],
+      hasLicense: json['possui_cnh'],
       hasCar: json['tem_carro'],
+      hourlyRate: json['valor_hora'],
     );
   }
 
@@ -81,10 +85,11 @@ class Cuidador {
     DateTime? birthDate,
     String? photoUrl,
     String? biography,
-    String? smokes,
+    String? smokingStatus,
     String? hasChildren,
-    String? hasDrivingLicense,
+    String? hasLicense,
     String? hasCar,
+    String? hourlyRate,
   }) {
     return Cuidador(
       id: id ?? this.id,
@@ -97,10 +102,11 @@ class Cuidador {
       birthDate: birthDate ?? this.birthDate,
       photoUrl: photoUrl ?? this.photoUrl,
       biography: biography ?? this.biography,
-      smokes: smokes ?? this.smokes,
+      smokingStatus: smokingStatus ?? this.smokingStatus,
       hasChildren: hasChildren ?? this.hasChildren,
-      hasDrivingLicense: hasDrivingLicense ?? this.hasDrivingLicense,
+      hasLicense: hasLicense ?? this.hasLicense,
       hasCar: hasCar ?? this.hasCar,
+      hourlyRate: hourlyRate ?? this.hourlyRate,
     );
   }
 }
