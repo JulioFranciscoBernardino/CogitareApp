@@ -22,7 +22,7 @@ class ServicoAutenticacao {
     }
   }
 
-  // Obter tipo do usuário logado
+  // Obter tipo do usuário logador
   static Future<String?> getUserType() async {
     try {
       final prefs = await SharedPreferences.getInstance();

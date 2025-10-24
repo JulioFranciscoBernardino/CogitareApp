@@ -242,10 +242,11 @@ class ServicoCuidadoresProximos {
         photoUrl: null,
         biography:
             'Cuidador experiente com ${5 + random.nextInt(15)} anos de experiência.',
-        smokes: random.nextBool() ? 'Não' : 'Sim',
+        smokingStatus: random.nextBool() ? 'Não' : 'Sim',
         hasChildren: random.nextBool() ? 'Sim' : 'Não',
-        hasDrivingLicense: random.nextBool() ? 'Sim' : 'Não',
+        hasLicense: random.nextBool() ? 'Sim' : 'Não',
         hasCar: random.nextBool() ? 'Sim' : 'Não',
+        hourlyRate: (50 + random.nextInt(100)).toString(),
       );
 
       final address = Endereco(

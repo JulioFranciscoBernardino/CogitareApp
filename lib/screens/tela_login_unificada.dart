@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../services/servico_autenticacao.dart';
+import '../services/servico_api.dart';
 import 'tela_dashboard_cuidador.dart';
 import 'tela_dashboard_responsavel.dart';
 
@@ -431,26 +432,12 @@ class _TelaLoginUnificadaState extends State<TelaLoginUnificada> {
     });
 
     try {
-      // Simular login bem-sucedido para teste
-      final result = <String, dynamic>{
-        'success': true,
-        'data': {
-          'user': {
-            'id': 1,
-            'nome': 'João Maria',
-            'email': emailController.text,
-            'tipo': selectedUserType,
-          },
-          'token': 'test_token_123'
-        }
-      };
-
-      // Comentar o código real para teste
-      // final result = await ApiService.login(
-      //   emailController.text,
-      //   passwordController.text,
-      //   selectedUserType!,
-      // );
+      // Usar API real para login
+      final result = await ServicoApi.login(
+        emailController.text,
+        passwordController.text,
+        selectedUserType!,
+      );
 
       if (result['success']) {
         HapticFeedback.lightImpact();
