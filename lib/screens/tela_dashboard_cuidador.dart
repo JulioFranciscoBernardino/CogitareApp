@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../services/servico_autenticacao.dart';
+import 'package:intl/intl.dart';
+import '../controllers/dashboard_cuidador_controller.dart';
+import '../utils/navigation_utils.dart';
 
 class TelaDashboardCuidador extends StatefulWidget {
   static const route = '/dashboard-cuidador';
@@ -10,6 +12,51 @@ class TelaDashboardCuidador extends StatefulWidget {
 }
 
 class _TelaDashboardCuidadorState extends State<TelaDashboardCuidador> {
+  String _userName = 'Cuidador';
+  int _propostasPendentes = 0;
+  int _servicosAtivos = 0;
+  int _concluidos = 0;
+  bool _isLoading = true;
+  Map<String, dynamic>? _proximoAtendimento;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDashboardData();
+  }
+
+  Future<void> _loadDashboardData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Carregar nome do usuário
+      final userName = await DashboardCuidadorController.loadUserName();
+
+      // Carregar estatísticas
+      final estatisticas = await DashboardCuidadorController.loadEstatisticas();
+
+      // Carregar próximo atendimento
+      final proximoAtendimento =
+          await DashboardCuidadorController.loadProximoAtendimento();
+
+      setState(() {
+        _userName = userName;
+        _propostasPendentes = estatisticas['propostasPendentes'] ?? 0;
+        _servicosAtivos = estatisticas['servicosAtivos'] ?? 0;
+        _concluidos = estatisticas['concluidos'] ?? 0;
+        _proximoAtendimento = proximoAtendimento;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Erro ao carregar dados do dashboard: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
@@ -141,14 +188,16 @@ class _TelaDashboardCuidadorState extends State<TelaDashboardCuidador> {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        const Expanded(
+                        Expanded(
                           child: Text(
-                            'Boas-vindas, Elizabeth.',
-                            style: TextStyle(
+                            'Boas-vindas, $_userName.',
+                            style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: Colors.black87,
                             ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                           ),
                         ),
                       ],
@@ -164,7 +213,7 @@ class _TelaDashboardCuidadorState extends State<TelaDashboardCuidador> {
                       children: [
                         Expanded(
                           child: _buildStatCard(
-                            number: '2',
+                            number: _isLoading ? '...' : '$_propostasPendentes',
                             title: 'Propostas',
                             subtitle: 'Pendentes',
                             color: const Color(0xFF4CAF50),
@@ -173,7 +222,7 @@ class _TelaDashboardCuidadorState extends State<TelaDashboardCuidador> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: _buildStatCard(
-                            number: '1',
+                            number: _isLoading ? '...' : '$_servicosAtivos',
                             title: 'Serviço',
                             subtitle: 'Ativo',
                             color: const Color(0xFF2196F3),
@@ -182,7 +231,7 @@ class _TelaDashboardCuidadorState extends State<TelaDashboardCuidador> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: _buildStatCard(
-                            number: '15',
+                            number: _isLoading ? '...' : '$_concluidos',
                             title: 'Concluídos',
                             subtitle: '',
                             color: const Color(0xFFF5F5F5),
@@ -219,97 +268,137 @@ class _TelaDashboardCuidadorState extends State<TelaDashboardCuidador> {
                           ],
                         ),
                         const SizedBox(height: 16),
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: const Color(0xFFE0E0E0)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
-                                blurRadius: 8,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 50,
-                                height: 50,
+                        _proximoAtendimento == null
+                            ? Container(
+                                padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: const Color(0xFFE0E0E0),
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                      color: const Color(0xFFE0E0E0)),
                                 ),
-                                child: const Icon(
-                                  Icons.person,
-                                  color: Color(0xFF757575),
-                                  size: 30,
+                                child: const Center(
+                                  child: Text(
+                                    'Nenhum próximo serviço agendado',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
                                 ),
+                              )
+                            : Column(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                          color: const Color(0xFFE0E0E0)),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.05),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 50,
+                                          height: 50,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: const Color(0xFFE0E0E0),
+                                          ),
+                                          child: const Icon(
+                                            Icons.person,
+                                            color: Color(0xFF757575),
+                                            size: 30,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                _proximoAtendimento![
+                                                        'nome_responsavel'] ??
+                                                    _proximoAtendimento![
+                                                        'nome_idoso'] ??
+                                                    'Cliente',
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                _proximoAtendimento![
+                                                        'observacao'] ??
+                                                    'Serviço agendado',
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                              Text(
+                                                _formatarDataHora(
+                                                  _proximoAtendimento![
+                                                      'data_inicio'],
+                                                  _proximoAtendimento![
+                                                      'data_fim'],
+                                                ),
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                              Text(
+                                                _proximoAtendimento!['local'] ??
+                                                    'Local não informado',
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                              content: Text(
+                                                  'Ver detalhes em desenvolvimento')),
+                                        );
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            const Color(0xFF28323C),
+                                        foregroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      child: const Text('Ver detalhes'),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'Maria Souza',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black87,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    const Text(
-                                      'Plantão noturno',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.black87,
-                                      ),
-                                    ),
-                                    const Text(
-                                      'Hoje, 20:00 às 06:00',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.black87,
-                                      ),
-                                    ),
-                                    const Text(
-                                      'Santo André - SP',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Ver detalhes em desenvolvimento')),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF28323C),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: const Text('Ver detalhes'),
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -551,15 +640,11 @@ class _TelaDashboardCuidadorState extends State<TelaDashboardCuidador> {
     );
 
     if (shouldLogout == true) {
-      // Limpar dados de login
-      await ServicoAutenticacao.clearLoginData();
+      // Executar logout usando o controller
+      await DashboardCuidadorController.performLogout();
 
-      // Navegar para tela de seleção de papel
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        '/selecao-papel',
-        (route) => false,
-      );
+      // Navegar para onboarding pulando até a última página
+      NavigationUtils.navigateToOnboardingLastPage(context);
 
       // Mostrar mensagem de sucesso
       ScaffoldMessenger.of(context).showSnackBar(
@@ -568,6 +653,42 @@ class _TelaDashboardCuidadorState extends State<TelaDashboardCuidador> {
           backgroundColor: Colors.green,
         ),
       );
+    }
+  }
+
+  String _formatarDataHora(String? dataInicio, String? dataFim) {
+    if (dataInicio == null) return 'Data não informada';
+
+    try {
+      final inicio = DateTime.parse(dataInicio);
+      final agora = DateTime.now();
+      final hoje = DateTime(agora.year, agora.month, agora.day);
+      final dataInicioOnly = DateTime(inicio.year, inicio.month, inicio.day);
+
+      String dataFormatada;
+      if (dataInicioOnly == hoje) {
+        dataFormatada = 'Hoje';
+      } else if (dataInicioOnly == hoje.add(const Duration(days: 1))) {
+        dataFormatada = 'Amanhã';
+      } else {
+        dataFormatada = DateFormat('dd/MM/yyyy', 'pt_BR').format(inicio);
+      }
+
+      final horaInicio = DateFormat('HH:mm', 'pt_BR').format(inicio);
+
+      if (dataFim != null) {
+        try {
+          final fim = DateTime.parse(dataFim);
+          final horaFim = DateFormat('HH:mm', 'pt_BR').format(fim);
+          return '$dataFormatada, $horaInicio às $horaFim';
+        } catch (e) {
+          return '$dataFormatada, $horaInicio';
+        }
+      } else {
+        return '$dataFormatada, $horaInicio';
+      }
+    } catch (e) {
+      return 'Data inválida';
     }
   }
 }

@@ -3,9 +3,9 @@ import 'package:intl/intl.dart';
 import '../widgets/widgets_comuns.dart';
 import '../models/cuidador.dart';
 import '../models/endereco.dart';
-import '../services/servico_cuidador.dart';
-import '../services/servico_api.dart';
-import '../utils/validadores.dart';
+import '../services/api_cuidador.dart';
+import '../services/api_service.dart';
+import '../utils/form_validators.dart';
 import 'tela_sucesso.dart';
 
 class TelaCadastroCuidador extends StatefulWidget {
@@ -77,72 +77,15 @@ class _TelaCadastroCuidadorState extends State<TelaCadastroCuidador> {
   final hourlyRateController = TextEditingController();
 
   // Validations
-  String? _validateName(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Nome é obrigatório';
-    }
-    if (value.length < 2) {
-      return 'Nome deve ter pelo menos 2 caracteres';
-    }
-    return null;
-  }
-
-  String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'E-mail é obrigatório';
-    }
-    if (!Validators.isValidEmail(value)) {
-      return 'E-mail inválido';
-    }
-    return null;
-  }
-
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Senha é obrigatória';
-    }
-    if (value.length < 6) {
-      return 'Senha deve ter pelo menos 6 caracteres';
-    }
-    return null;
-  }
-
-  String? _validateConfirmPassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Confirmação de senha é obrigatória';
-    }
-    if (value != passwordController.text) {
-      return 'Senhas não coincidem';
-    }
-    return null;
-  }
-
-  String? _validateCPF(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'CPF é obrigatório';
-    }
-    if (!Validators.isValidCPF(value)) {
-      return 'CPF inválido';
-    }
-    return null;
-  }
-
-  String? _validatePhone(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Telefone é obrigatório';
-    }
-    return null;
-  }
-
-  String? _validateZipCode(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'CEP é obrigatório';
-    }
-    if (value.length != 8) {
-      return 'CEP deve ter 8 dígitos';
-    }
-    return null;
-  }
+  // Usar FormValidators para validações
+  String? _validateName(String? value) => FormValidators.validateName(value);
+  String? _validateEmail(String? value) => FormValidators.validateEmail(value);
+  String? _validatePassword(String? value) => FormValidators.validatePassword(value);
+  String? _validateConfirmPassword(String? value) => 
+      FormValidators.validateConfirmPassword(value, passwordController.text);
+  String? _validateCPF(String? value) => FormValidators.validateCPF(value);
+  String? _validatePhone(String? value) => FormValidators.validatePhone(value);
+  String? _validateZipCode(String? value) => FormValidators.validateZipCode(value);
 
   void _next() {
     if (index < 5) {
@@ -324,7 +267,7 @@ class _TelaCadastroCuidadorState extends State<TelaCadastroCuidador> {
 
       print('🔍 Chamando ServicoCuidador.createComplete...');
       // Create caregiver
-      final response = await ServicoCuidador.createComplete(
+      final response = await ApiCuidador.createComplete(
         address: address,
         caregiver: caregiver,
       );

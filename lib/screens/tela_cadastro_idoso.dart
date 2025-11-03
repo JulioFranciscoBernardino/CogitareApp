@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../widgets/widgets_comuns.dart';
 import '../models/idoso.dart';
-import '../services/servico_idoso.dart';
+import '../services/api_idoso.dart';
+import '../utils/form_validators.dart';
 import 'tela_sucesso.dart';
 
 class TelaCadastroIdoso extends StatefulWidget {
@@ -67,15 +68,8 @@ class _TelaCadastroIdosoState extends State<TelaCadastroIdoso> {
   }
 
   // Validations
-  String? _validateName(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Nome é obrigatório';
-    }
-    if (value.length < 2) {
-      return 'Nome deve ter pelo menos 2 caracteres';
-    }
-    return null;
-  }
+  // Usar FormValidators para validações
+  String? _validateName(String? value) => FormValidators.validateName(value);
 
   Future<void> _selectDate() async {
     final DateTime? picked = await showDatePicker(
@@ -197,7 +191,7 @@ class _TelaCadastroIdosoState extends State<TelaCadastroIdoso> {
       );
 
       // Create elder
-      final response = await ServicoIdoso.createIdoso(elder);
+      final response = await ApiIdoso.create(elder);
 
       if (response['success'] == true) {
         Navigator.pushReplacementNamed(context, TelaSucesso.route,

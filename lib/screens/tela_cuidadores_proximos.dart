@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/widget_cuidadores_proximos.dart';
 import '../models/responsavel.dart';
-import '../services/servico_cuidadores_proximos.dart';
+import '../services/api_cuidadores_proximos.dart';
 import '../models/cuidador_proximo.dart';
 
 class TelaCuidadoresProximos extends StatefulWidget {
@@ -179,7 +179,7 @@ class _TelaCuidadoresProximosState extends State<TelaCuidadoresProximos> {
 
   void _searchWithFilters() async {
     try {
-      final caregivers = await ServicoCuidadoresProximos.searchCuidadorProximos(
+      final caregivers = await ApiCuidadoresProximos.search(
         guardian: _guardian,
         maxDistanceKm: _maxDistance,
         minHourlyRate: _minHourlyRate,

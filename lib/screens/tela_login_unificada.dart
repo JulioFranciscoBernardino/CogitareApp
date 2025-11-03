@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../services/servico_autenticacao.dart';
-import '../services/servico_api.dart';
-import 'tela_dashboard_cuidador.dart';
-import 'tela_dashboard_responsavel.dart';
+import '../controllers/login_controller.dart';
+import '../utils/navigation_utils.dart';
 
 class TelaLoginUnificada extends StatefulWidget {
   static const route = '/login-unificado';
@@ -29,16 +27,32 @@ class _TelaLoginUnificadaState extends State<TelaLoginUnificada> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header com logo horizontal
+            // Header com logo horizontal e botão voltar
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               child: Row(
                 children: [
-                  SizedBox(
-                    height: 40,
-                    child: Image.asset(
-                      'assets/images/logo_cogitare_horizontal.png',
-                      fit: BoxFit.contain,
+                  // Botão voltar
+                  IconButton(
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                      NavigationUtils.navigateToOnboardingLastPage(context);
+                    },
+                    icon: const Icon(
+                      Icons.arrow_back_ios,
+                      color: Color(0xFF424242),
+                      size: 24,
+                    ),
+                  ),
+                  // Logo horizontal COGITARE
+                  Expanded(
+                    child: Container(
+                      height: 40,
+                      padding: const EdgeInsets.only(right: 200),
+                      child: Image.asset(
+                        'assets/images/logo_cogitare_horizontal.png',
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
                 ],
@@ -416,12 +430,18 @@ class _TelaLoginUnificadaState extends State<TelaLoginUnificada> {
   }
 
   void _handleLogin() async {
-    if (emailController.text.isEmpty ||
-        passwordController.text.isEmpty ||
-        selectedUserType == null) {
+    // Validar campos usando o controller
+    final validationError = LoginController.validateFields(
+      email: emailController.text,
+      senha: passwordController.text,
+      userType: selectedUserType,
+    );
+
+    if (validationError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Por favor, preencha todos os campos'),
+        SnackBar(
+          content: Text(validationError),
+          backgroundColor: Colors.red,
         ),
       );
       return;
@@ -432,47 +452,22 @@ class _TelaLoginUnificadaState extends State<TelaLoginUnificada> {
     });
 
     try {
-      // Usar API real para login
-      final result = await ServicoApi.login(
-        emailController.text,
-        passwordController.text,
-        selectedUserType!,
+      // Executar login usando o controller
+      final result = await LoginController.performLogin(
+        email: emailController.text,
+        senha: passwordController.text,
+        userType: selectedUserType!,
       );
 
       if (result['success']) {
         HapticFeedback.lightImpact();
 
-        // Salvar dados de login
-        await ServicoAutenticacao.saveLoginData(
-          userType: result['data']['user']['tipo'],
-          userData: result['data']['user'],
-          token: result['data']['token'],
-        );
-
-        // Limpar flag de processo de cadastro ao fazer login
-        await ServicoAutenticacao.clearSignupProcess();
-
-        // Redirecionar baseado no tipo de usuário
-        final userType = result['data']['user']['tipo'];
-        if (userType == 'cuidador') {
-          // Redirecionar para tela do cuidador
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (_) => const TelaDashboardCuidador()),
-            (route) => false,
-          );
-        } else if (userType == 'responsavel') {
-          // Redirecionar para tela do responsável
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (_) => const TelaDashboardResponsavel()),
-            (route) => false,
-          );
-        }
+        // Navegar para o dashboard apropriado
+        LoginController.navigateToDashboard(context, result['userType']);
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Bem-vindo(a), ${result['data']['user']['nome']}!'),
+            content: Text('Bem-vindo(a), ${result['userName']}!'),
             backgroundColor: Colors.green,
           ),
         );

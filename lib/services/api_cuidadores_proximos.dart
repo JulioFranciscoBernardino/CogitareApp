@@ -1,87 +1,69 @@
-import 'dart:convert';
 import 'dart:math';
-import 'package:http/http.dart' as http;
 import '../models/cuidador_proximo.dart';
 import '../models/responsavel.dart';
 import '../models/cuidador.dart';
 import '../models/endereco.dart';
+import 'api_client.dart';
 
-class ServicoCuidadoresProximos {
-  static const String baseUrl = 'http://localhost:3000/api';
-
-  // Busca cuidadores próximos baseado no endereço do responsável
-  static Future<List<CuidadorProximo>> getCuidadorProximos(
-    Responsavel guardian, {
-    double maxDistanceKm = 999999.0, // Distância muito alta para não limitar
+/// Serviço de API para Cuidadores Próximos
+class ApiCuidadoresProximos {
+  /// Busca cuidadores próximos usando coordenadas padrão
+  static Future<List<CuidadorProximo>> getNearby({
+    double maxDistanceKm = 999999.0,
     int limit = 10,
   }) async {
     try {
       // Usa coordenadas de São Paulo como padrão
-      final response = await http.get(
-        Uri.parse(
-            '$baseUrl/nearby-caregivers/nearby/coordinates?latitude=-23.5505&longitude=-46.6333&max_distance=$maxDistanceKm&limit=$limit'),
-        headers: {'Content-Type': 'application/json'},
+      final response = await ApiClient.get(
+        '/api/nearby-caregivers/nearby/coordinates?latitude=-23.5505&longitude=-46.6333&max_distance=$maxDistanceKm&limit=$limit',
       );
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data['success'] == true) {
-          final List<dynamic> caregiversData = data['data'];
-          print('✅ Dados reais do banco carregados com sucesso!');
-          return caregiversData
-              .map((json) => CuidadorProximo.fromJson(json))
-              .toList();
-        }
+      if (response['success'] == true) {
+        final List<dynamic> caregiversData = response['data'];
+        print('✅ Dados reais do banco carregados com sucesso!');
+        return caregiversData
+            .map((json) => CuidadorProximo.fromJson(json))
+            .toList();
       }
 
       // Se não conseguiu buscar do backend, retorna dados mock
       print('⚠️ Backend não disponível - usando dados mock');
-      print(
-          '💡 Para usar dados reais: inicie o backend com "node server.js" na pasta backend');
       return _getMockCuidadors(limit);
     } catch (e) {
       print('❌ Erro ao buscar cuidadores próximos: $e');
       print('🔄 Usando dados mock como fallback');
-      // Retorna dados mock em caso de erro
       return _getMockCuidadors(limit);
     }
   }
 
-  // Busca cuidadores próximos usando coordenadas específicas
-  static Future<List<CuidadorProximo>> getCuidadorProximosByCoordinates(
-    double latitude,
-    double longitude, {
-    double maxDistanceKm = 999999.0, // Distância muito alta para não limitar
+  /// Busca cuidadores próximos usando coordenadas específicas
+  static Future<List<CuidadorProximo>> getNearbyByCoordinates({
+    required double latitude,
+    required double longitude,
+    double maxDistanceKm = 999999.0,
     int limit = 10,
   }) async {
     try {
-      final response = await http.get(
-        Uri.parse(
-            '$baseUrl/nearby-caregivers/nearby/coordinates?latitude=$latitude&longitude=$longitude&max_distance=$maxDistanceKm&limit=$limit'),
-        headers: {'Content-Type': 'application/json'},
+      final response = await ApiClient.get(
+        '/api/nearby-caregivers/nearby/coordinates?latitude=$latitude&longitude=$longitude&max_distance=$maxDistanceKm&limit=$limit',
       );
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data['success'] == true) {
-          final List<dynamic> caregiversData = data['data'];
-          return caregiversData
-              .map((json) => CuidadorProximo.fromJson(json))
-              .toList();
-        }
+      if (response['success'] == true) {
+        final List<dynamic> caregiversData = response['data'];
+        return caregiversData
+            .map((json) => CuidadorProximo.fromJson(json))
+            .toList();
       }
 
-      // Se não conseguiu buscar do backend, retorna dados mock
       return _getMockCuidadors(limit);
     } catch (e) {
       print('Erro ao buscar cuidadores próximos por coordenadas: $e');
-      // Retorna dados mock em caso de erro
       return _getMockCuidadors(limit);
     }
   }
 
-  // Método para buscar cuidadores próximos com filtros
-  static Future<List<CuidadorProximo>> searchCuidadorProximos({
+  /// Busca cuidadores próximos com filtros
+  static Future<List<CuidadorProximo>> search({
     required Responsavel guardian,
     double? maxDistanceKm,
     double? minHourlyRate,
@@ -106,36 +88,25 @@ class ServicoCuidadoresProximos {
         queryParams['only_available'] = 'true';
       }
 
-      final uri = Uri.parse('$baseUrl/nearby-caregivers/nearby').replace(
-        queryParameters: queryParams,
-      );
+      final endpoint = '/api/nearby-caregivers/nearby?${Uri(queryParameters: queryParams).query}';
+      final response = await ApiClient.get(endpoint);
 
-      final response = await http.get(
-        uri,
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data['success'] == true) {
-          final List<dynamic> caregiversData = data['data'];
-          return caregiversData
-              .map((json) => CuidadorProximo.fromJson(json))
-              .toList();
-        }
+      if (response['success'] == true) {
+        final List<dynamic> caregiversData = response['data'];
+        return caregiversData
+            .map((json) => CuidadorProximo.fromJson(json))
+            .toList();
       }
 
-      // Se não conseguiu buscar do backend, retorna dados mock
       return _getMockCuidadors(limit);
     } catch (e) {
       print('Erro ao buscar cuidadores próximos com filtros: $e');
-      // Retorna dados mock em caso de erro
       return _getMockCuidadors(limit);
     }
   }
 
-  // Método para buscar cuidadores próximos por coordenadas com filtros
-  static Future<List<CuidadorProximo>> searchCuidadorProximosByCoordinates({
+  /// Busca cuidadores próximos por coordenadas com filtros
+  static Future<List<CuidadorProximo>> searchByCoordinates({
     required double latitude,
     required double longitude,
     double? maxDistanceKm,
@@ -162,37 +133,24 @@ class ServicoCuidadoresProximos {
         queryParams['only_available'] = 'true';
       }
 
-      final uri =
-          Uri.parse('$baseUrl/nearby-caregivers/nearby/coordinates').replace(
-        queryParameters: queryParams,
-      );
+      final endpoint = '/api/nearby-caregivers/nearby/coordinates?${Uri(queryParameters: queryParams).query}';
+      final response = await ApiClient.get(endpoint);
 
-      final response = await http.get(
-        uri,
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data['success'] == true) {
-          final List<dynamic> caregiversData = data['data'];
-          return caregiversData
-              .map((json) => CuidadorProximo.fromJson(json))
-              .toList();
-        }
+      if (response['success'] == true) {
+        final List<dynamic> caregiversData = response['data'];
+        return caregiversData
+            .map((json) => CuidadorProximo.fromJson(json))
+            .toList();
       }
 
-      // Se não conseguiu buscar do backend, retorna dados mock
       return _getMockCuidadors(limit);
     } catch (e) {
-      print(
-          'Erro ao buscar cuidadores próximos por coordenadas com filtros: $e');
-      // Retorna dados mock em caso de erro
+      print('Erro ao buscar cuidadores próximos por coordenadas com filtros: $e');
       return _getMockCuidadors(limit);
     }
   }
 
-  // Método para gerar dados mock de cuidadores
+  /// Gera dados mock de cuidadores
   static List<CuidadorProximo> _getMockCuidadors(int limit) {
     final random = Random();
     final mockCuidadors = <CuidadorProximo>[];
@@ -227,8 +185,7 @@ class ServicoCuidadoresProximos {
       final name = names[i];
       final city = cities[random.nextInt(cities.length)];
       final distance = 5.0 + random.nextDouble() * 50.0; // Entre 5 e 55 km
-      final hourlyRate =
-          15.0 + random.nextDouble() * 35.0; // Entre R$ 15 e R$ 50
+      final hourlyRate = 15.0 + random.nextDouble() * 35.0; // Entre R$ 15 e R$ 50
       final isAvailable = random.nextBool();
 
       final caregiver = Cuidador(
@@ -271,3 +228,4 @@ class ServicoCuidadoresProximos {
     return mockCuidadors;
   }
 }
+

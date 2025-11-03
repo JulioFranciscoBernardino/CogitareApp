@@ -1,11 +1,12 @@
 import '../models/idoso.dart';
-import 'servico_api.dart';
+import 'api_client.dart';
 
-class ServicoIdoso {
-  // Criar idoso via API
-  static Future<Map<String, dynamic>> createIdoso(Idoso idoso) async {
+/// Serviço de API para Idosos
+class ApiIdoso {
+  /// Cria idoso
+  static Future<Map<String, dynamic>> create(Idoso idoso) async {
     try {
-      final response = await ServicoApi.post('/api/idoso', idoso.toJson());
+      final response = await ApiClient.post('/api/idoso', idoso.toJson());
 
       if (response['success']) {
         return {
@@ -27,10 +28,10 @@ class ServicoIdoso {
     }
   }
 
-  // Listar idosos via API
-  static Future<List<Idoso>> listIdosos() async {
+  /// Lista todos os idosos
+  static Future<List<Idoso>> list() async {
     try {
-      final response = await ServicoApi.get('/api/idoso');
+      final response = await ApiClient.get('/api/idoso');
 
       if (response['success']) {
         final List<dynamic> data = response['data'];
@@ -43,21 +44,21 @@ class ServicoIdoso {
     }
   }
 
-  // Listar idosos por responsável via API (implementação futura)
-  static Future<List<Idoso>> listIdososByGuardian(int guardianId) async {
+  /// Lista idosos por responsável
+  static Future<List<Idoso>> listByGuardian(int guardianId) async {
     try {
       // Por enquanto, retorna todos os idosos
       // Futuramente pode ser implementado um endpoint específico
-      return await listIdosos();
+      return await list();
     } catch (e) {
       throw Exception('Erro de conexão: $e');
     }
   }
 
-  // Buscar idoso por ID via API
-  static Future<Idoso?> getIdosoById(int id) async {
+  /// Busca idoso por ID
+  static Future<Idoso?> getById(int id) async {
     try {
-      final response = await ServicoApi.get('/api/idoso/$id');
+      final response = await ApiClient.get('/api/idoso/$id');
 
       if (response['success']) {
         return Idoso.fromJson(response['data']);
@@ -69,13 +70,13 @@ class ServicoIdoso {
     }
   }
 
-  // Atualizar idoso via API
-  static Future<Map<String, dynamic>> updateIdoso(int id, Idoso idoso) async {
+  /// Atualiza idoso
+  static Future<Map<String, dynamic>> update(int id, Idoso idoso) async {
     try {
       final idosoData = idoso.toJson();
       idosoData.remove('IdIdoso'); // Remove ID do objeto antes de enviar
 
-      final response = await ServicoApi.put('/api/idoso/$id', idosoData);
+      final response = await ApiClient.put('/api/idoso/$id', idosoData);
 
       if (response['success']) {
         return {
@@ -96,3 +97,4 @@ class ServicoIdoso {
     }
   }
 }
+

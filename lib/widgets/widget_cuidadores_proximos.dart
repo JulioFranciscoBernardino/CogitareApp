@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/cuidador_proximo.dart';
 import '../models/responsavel.dart';
-import '../services/servico_cuidadores_proximos.dart';
+import '../services/api_cuidadores_proximos.dart';
 
 class WidgetCuidadoresProximos extends StatefulWidget {
   final Responsavel guardian;
@@ -42,8 +42,7 @@ class _WidgetCuidadoresProximosState extends State<WidgetCuidadoresProximos> {
     });
 
     try {
-      final caregivers = await ServicoCuidadoresProximos.getCuidadorProximos(
-        widget.guardian,
+      final caregivers = await ApiCuidadoresProximos.getNearby(
         maxDistanceKm: widget.maxDistanceKm ?? 50.0,
         limit: widget.limit,
       );

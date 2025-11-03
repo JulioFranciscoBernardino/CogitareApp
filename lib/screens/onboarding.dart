@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'selecao_papel.dart';
 import '../services/servico_autenticacao.dart';
+import '../utils/navigation_utils.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key});
+  final bool skipToLastPage;
+
+  const OnboardingScreen({super.key, this.skipToLastPage = false});
 
   static String? get route => null;
 
@@ -12,8 +15,19 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
+  late PageController _pageController;
+  late int _currentPage;
+
+  @override
+  void initState() {
+    super.initState();
+    // Se skipToLastPage for true, inicializar na última página
+    final initialPage = widget.skipToLastPage
+        ? 3
+        : 0; // 3 é o índice da última página (tela final)
+    _currentPage = initialPage;
+    _pageController = PageController(initialPage: initialPage);
+  }
 
   final List<Map<String, dynamic>> onboardingData = [
     {
@@ -332,8 +346,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 WidgetSpan(
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.pushReplacementNamed(
-                          context, '/login-unificado');
+                      NavigationUtils.navigateToLogin(context);
                     },
                     child: const Text(
                       "Faça login.",
@@ -371,5 +384,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 }

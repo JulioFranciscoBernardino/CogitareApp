@@ -1,12 +1,13 @@
 import '../models/responsavel.dart';
 import '../models/endereco.dart';
-import 'servico_api.dart';
+import 'api_client.dart';
 
-class ServicoApiResponsavel {
-  // Cadastrar endereço via API
+/// Serviço de API para Responsáveis
+class ApiResponsavel {
+  /// Cria endereço
   static Future<Map<String, dynamic>> createEndereco(Endereco address) async {
     try {
-      final response = await ServicoApi.post('/api/responsavel/endereco', {
+      return await ApiClient.post('/api/responsavel/endereco', {
         'cidade': address.city,
         'bairro': address.neighborhood,
         'rua': address.street,
@@ -14,41 +15,38 @@ class ServicoApiResponsavel {
         'complemento': address.complement,
         'cep': address.zipCode,
       });
-
-      return response;
     } catch (e) {
       return {'success': false, 'message': 'Erro ao cadastrar endereço: $e'};
     }
   }
 
-  // Cadastrar responsável via API
+  /// Cria responsável
   static Future<Map<String, dynamic>> createResponsavel(
-      Responsavel guardian) async {
+    Responsavel guardian,
+  ) async {
     try {
-      final response = await ServicoApi.post('/api/responsavel', {
+      return await ApiClient.post('/api/responsavel', {
         'idEndereco': guardian.addressId,
         'cpf': guardian.cpf,
         'nome': guardian.name,
         'email': guardian.email,
         'telefone': guardian.phone,
         'dataNascimento': guardian.birthDate?.toIso8601String().split('T')[0],
-        'senha': guardian.password, // Assumindo que o modelo tem senha
+        'senha': guardian.password,
         'fotoUrl': guardian.photoUrl,
       });
-
-      return response;
     } catch (e) {
       return {'success': false, 'message': 'Erro ao cadastrar responsável: $e'};
     }
   }
 
-  // Cadastro completo via API (endereço + responsável em uma requisição)
+  /// Cadastro completo (endereço + responsável)
   static Future<Map<String, dynamic>> createComplete({
     required Endereco address,
     required Responsavel guardian,
   }) async {
     try {
-      final response = await ServicoApi.post('/api/responsavel/completo', {
+      return await ApiClient.post('/api/responsavel/completo', {
         // Dados do endereço
         'cidade': address.city,
         'bairro': address.neighborhood,
@@ -62,20 +60,18 @@ class ServicoApiResponsavel {
         'email': guardian.email,
         'telefone': guardian.phone,
         'dataNascimento': guardian.birthDate?.toIso8601String().split('T')[0],
-        'senha': guardian.password, // Assumindo que o modelo tem senha
+        'senha': guardian.password,
         'fotoUrl': guardian.photoUrl,
       });
-
-      return response;
     } catch (e) {
       return {'success': false, 'message': 'Erro no cadastro completo: $e'};
     }
   }
 
-  // Listar responsáveis via API
-  static Future<List<Responsavel>> listResponsavels() async {
+  /// Lista todos os responsáveis
+  static Future<List<Responsavel>> list() async {
     try {
-      final response = await ServicoApi.get('/api/responsavel');
+      final response = await ApiClient.get('/api/responsavel');
 
       if (response['success'] == true) {
         final List<dynamic> data = response['data'];
@@ -89,10 +85,10 @@ class ServicoApiResponsavel {
     }
   }
 
-  // Buscar responsável por ID via API
-  static Future<Responsavel?> getResponsavelById(int id) async {
+  /// Busca responsável por ID
+  static Future<Responsavel?> getById(int id) async {
     try {
-      final response = await ServicoApi.get('/api/responsavel/$id');
+      final response = await ApiClient.get('/api/responsavel/$id');
 
       if (response['success'] == true) {
         return Responsavel.fromJson(response['data']);
@@ -105,3 +101,4 @@ class ServicoApiResponsavel {
     }
   }
 }
+

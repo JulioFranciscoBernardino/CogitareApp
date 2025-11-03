@@ -12,6 +12,7 @@ const enderecoRoutes = require('./routes/endereco');
 const responsavelRoutes = require('./routes/responsavel');
 const nearbyCaregiversRoutes = require('./routes/nearby_caregivers');
 const contractsRoutes = require('./routes/contracts');
+const atendimentosRoutes = require('./routes/atendimentos');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -55,6 +56,7 @@ app.use('/api/endereco', enderecoRoutes);
 app.use('/api/responsavel', responsavelRoutes);
 app.use('/api/nearby-caregivers', nearbyCaregiversRoutes);
 app.use('/api/contracts', contractsRoutes);
+app.use('/api/atendimentos', atendimentosRoutes);
 
 // Rota de health check
 app.get('/api/health', (req, res) => {

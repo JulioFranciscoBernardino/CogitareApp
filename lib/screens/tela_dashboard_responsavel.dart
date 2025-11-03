@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import '../widgets/widget_cuidadores_proximos.dart';
 import '../widgets/widget_contrato_ativo.dart';
 import '../widgets/widget_sugestao_contrato.dart';
-import '../models/responsavel.dart';
 import '../models/contrato.dart';
 import '../models/cuidador_proximo.dart';
-import '../services/servico_contrato.dart';
-import '../services/servico_cuidadores_proximos.dart';
-import '../services/servico_autenticacao.dart';
+import '../controllers/dashboard_responsavel_controller.dart';
+import '../utils/navigation_utils.dart';
 
 class TelaDashboardResponsavel extends StatefulWidget {
   static const route = '/dashboard-responsavel';
@@ -22,11 +20,20 @@ class _TelaDashboardResponsavelState extends State<TelaDashboardResponsavel> {
   Contrato? _activeContract;
   List<CuidadorProximo> _suggestedCaregivers = [];
   bool _isLoading = true;
+  String _userName = 'João Maria'; // Valor padrão
 
   @override
   void initState() {
     super.initState();
+    _loadUserName();
     _loadDashboardData();
+  }
+
+  Future<void> _loadUserName() async {
+    final userName = await DashboardResponsavelController.loadUserName();
+    setState(() {
+      _userName = userName;
+    });
   }
 
   Future<void> _loadDashboardData() async {
@@ -35,23 +42,15 @@ class _TelaDashboardResponsavelState extends State<TelaDashboardResponsavel> {
     });
 
     try {
-      // Carregar contrato ativo
-      final contract = await ServicoContrato.getActiveContrato(
-          _getMockResponsavel().id ?? 1);
-
-      // Se não tem contrato ativo, carregar sugestões de cuidadores
-      List<CuidadorProximo> suggestions = [];
-      if (contract == null) {
-        suggestions = await ServicoCuidadoresProximos.getCuidadorProximos(
-          _getMockResponsavel(),
-          maxDistanceKm: 50.0,
-          limit: 3,
-        );
-      }
+      final responsavel =
+          DashboardResponsavelController.getCurrentResponsavel();
+      final data =
+          await DashboardResponsavelController.loadDashboardData(responsavel);
 
       setState(() {
-        _activeContract = contract;
-        _suggestedCaregivers = suggestions;
+        _activeContract = data['activeContract'] as Contrato?;
+        _suggestedCaregivers =
+            data['suggestedCaregivers'] as List<CuidadorProximo>;
         _isLoading = false;
       });
     } catch (e) {
@@ -94,23 +93,6 @@ class _TelaDashboardResponsavelState extends State<TelaDashboardResponsavel> {
                       size: 24,
                     ),
                   ),
-                  // Botão temporário para limpar dados (DEBUG)
-                  IconButton(
-                    onPressed: () async {
-                      await ServicoAutenticacao.clearAllData();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Dados limpos! Reinicie o app.'),
-                          backgroundColor: Colors.orange,
-                        ),
-                      );
-                    },
-                    icon: const Icon(
-                      Icons.clear_all,
-                      color: Colors.orange,
-                      size: 24,
-                    ),
-                  ),
                   // Botão de logout
                   IconButton(
                     onPressed: _handleLogout,
@@ -149,12 +131,16 @@ class _TelaDashboardResponsavelState extends State<TelaDashboardResponsavel> {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        const Text(
-                          'Bem-vindo (a), João Maria',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87,
+                        Expanded(
+                          child: Text(
+                            'Bem-vindo (a), $_userName',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                           ),
                         ),
                       ],
@@ -306,7 +292,8 @@ class _TelaDashboardResponsavelState extends State<TelaDashboardResponsavel> {
 
                     // Widget de cuidadores próximos
                     WidgetCuidadoresProximos(
-                      guardian: _getMockResponsavel(),
+                      guardian: DashboardResponsavelController
+                          .getCurrentResponsavel(),
                       maxDistanceKm:
                           999999.0, // Busca em qualquer lugar do mundo
                       limit: 2,
@@ -394,20 +381,6 @@ class _TelaDashboardResponsavelState extends State<TelaDashboardResponsavel> {
     );
   }
 
-  // Método para criar um responsável mock (em um app real, isso viria do estado global)
-  Responsavel _getMockResponsavel() {
-    return Responsavel(
-      id: 1,
-      addressId: 1,
-      cpf: '123.456.789-00',
-      name: 'João Maria',
-      email: 'joao@email.com',
-      phone: '(11) 99999-9999',
-      birthDate: DateTime(1980, 1, 1),
-      photoUrl: null,
-    );
-  }
-
   Widget _buildNavItem(IconData icon, bool isSelected) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -442,15 +415,11 @@ class _TelaDashboardResponsavelState extends State<TelaDashboardResponsavel> {
     );
 
     if (shouldLogout == true) {
-      // Limpar dados de login
-      await ServicoAutenticacao.clearLoginData();
+      // Executar logout usando o controller
+      await DashboardResponsavelController.performLogout();
 
-      // Navegar para tela de seleção de papel
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        '/selecao-papel',
-        (route) => false,
-      );
+      // Navegar para onboarding pulando até a última página
+      NavigationUtils.navigateToOnboardingLastPage(context);
 
       // Mostrar mensagem de sucesso
       ScaffoldMessenger.of(context).showSnackBar(

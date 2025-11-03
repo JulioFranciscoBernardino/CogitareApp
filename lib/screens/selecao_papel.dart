@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'tela_cadastro_cuidador.dart';
 import 'tela_cadastro_responsavel.dart';
-import 'onboarding.dart';
+import '../utils/navigation_utils.dart';
 import '../services/servico_autenticacao.dart';
 
 class SelecaoPapel extends StatelessWidget {
@@ -27,14 +27,7 @@ class SelecaoPapel extends StatelessWidget {
                   IconButton(
                     onPressed: () async {
                       HapticFeedback.lightImpact();
-                      // Limpar flag de processo de cadastro e ir para onboarding
-                      await ServicoAutenticacao.clearSignupProcess();
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const OnboardingScreen(),
-                        ),
-                      );
+                      await NavigationUtils.navigateToRoleSelection(context);
                     },
                     icon: const Icon(
                       Icons.arrow_back_ios,

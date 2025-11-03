@@ -1,12 +1,13 @@
 import '../models/cuidador.dart';
 import '../models/endereco.dart';
-import 'servico_api.dart';
+import 'api_client.dart';
 
-class ServicoCuidador {
-  // Criar endereço via API
+/// Serviço de API para Cuidadores
+class ApiCuidador {
+  /// Cria endereço
   static Future<Map<String, dynamic>> createEndereco(Endereco address) async {
     try {
-      final response = await ServicoApi.post('/api/endereco', {
+      final response = await ApiClient.post('/api/endereco', {
         'rua': address.street,
         'numero': address.number,
         'complemento': address.complement,
@@ -35,10 +36,10 @@ class ServicoCuidador {
     }
   }
 
-  // Criar cuidador via API
+  /// Cria cuidador
   static Future<Map<String, dynamic>> createCuidador(Cuidador caregiver) async {
     try {
-      final response = await ServicoApi.post('/api/cuidador', {
+      final response = await ApiClient.post('/api/cuidador', {
         'nome': caregiver.name,
         'email': caregiver.email,
         'senha': caregiver.password,
@@ -74,7 +75,7 @@ class ServicoCuidador {
     }
   }
 
-  // Criar cuidador completo (endereço + cuidador) via API
+  /// Cadastro completo (endereço + cuidador)
   static Future<Map<String, dynamic>> createComplete({
     required Endereco address,
     required Cuidador caregiver,
@@ -88,10 +89,12 @@ class ServicoCuidador {
       }
 
       // Atualizar o cuidador com o ID do endereço
-      caregiver = caregiver.copyWith(addressId: addressResult['addressId']);
+      final updatedCaregiver = caregiver.copyWith(
+        addressId: addressResult['addressId'],
+      );
 
       // Criar o cuidador
-      final caregiverResult = await createCuidador(caregiver);
+      final caregiverResult = await createCuidador(updatedCaregiver);
 
       if (!caregiverResult['success']) {
         return caregiverResult;
@@ -111,10 +114,10 @@ class ServicoCuidador {
     }
   }
 
-  // Listar cuidadores via API
-  static Future<List<Cuidador>> listCuidadors() async {
+  /// Lista todos os cuidadores
+  static Future<List<Cuidador>> list() async {
     try {
-      final response = await ServicoApi.get('/api/cuidador');
+      final response = await ApiClient.get('/api/cuidador');
 
       if (response['success']) {
         final List<dynamic> data = response['data'];
@@ -127,10 +130,10 @@ class ServicoCuidador {
     }
   }
 
-  // Buscar cuidador por ID via API
-  static Future<Cuidador?> getCuidadorById(int id) async {
+  /// Busca cuidador por ID
+  static Future<Cuidador?> getById(int id) async {
     try {
-      final response = await ServicoApi.get('/api/cuidador/$id');
+      final response = await ApiClient.get('/api/cuidador/$id');
 
       if (response['success']) {
         return Cuidador.fromJson(response['data']);
@@ -142,11 +145,10 @@ class ServicoCuidador {
     }
   }
 
-  // Atualizar cuidador via API
-  static Future<Map<String, dynamic>> updateCuidador(
-      int id, Cuidador caregiver) async {
+  /// Atualiza cuidador
+  static Future<Map<String, dynamic>> update(int id, Cuidador caregiver) async {
     try {
-      final response = await ServicoApi.put('/api/cuidador/$id', {
+      final response = await ApiClient.put('/api/cuidador/$id', {
         'nome': caregiver.name,
         'telefone': caregiver.phone,
         'cpf': caregiver.cpf,
@@ -173,3 +175,4 @@ class ServicoCuidador {
     }
   }
 }
+
