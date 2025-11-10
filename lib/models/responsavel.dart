@@ -30,6 +30,7 @@ class Responsavel {
       'Telefone': phone,
       'DataNascimento': birthDate?.toIso8601String().split('T')[0],
       'FotoUrl': photoUrl,
+      'senha': password, 
     };
   }
 

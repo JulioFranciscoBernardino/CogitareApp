@@ -26,20 +26,21 @@ class Idoso {
   });
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'guardianId': guardianId,
-      'mobilityId': mobilityId,
-      'autonomyLevelId': autonomyLevelId,
-      'name': name,
-      'birthDate': birthDate?.toIso8601String(),
-      'gender': gender,
-      'medicalCare': medicalCare,
-      'extraDescription': extraDescription,
-      'selectedServices': selectedServices,
-      'availability': availability,
-    };
-  }
+  return {
+    'IdResponsavel': guardianId,
+    'IdMobilidade': mobilityId,
+    'IdNivelAutonomia': autonomyLevelId,
+    'Nome': name,
+    'DataNascimento': birthDate?.toIso8601String().split('T')[0], // yyyy-MM-dd
+    'Sexo': gender,
+    'CuidadosMedicos': medicalCare,
+    'DescricaoExtra': extraDescription,
+    'FotoUrl': null, 
+    'SelectedServices': selectedServices,
+    'Availability': availability,
+  };
+}
+
 
   factory Idoso.fromJson(Map<String, dynamic> json) {
     return Idoso(
