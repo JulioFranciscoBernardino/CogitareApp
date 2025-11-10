@@ -1,3 +1,4 @@
+import 'package:cogitare_app/screens/tela_historico-servicos.dart';
 import 'package:flutter/material.dart';
 import 'widgets/verificador_inicial.dart';
 import 'screens/selecao_papel.dart';
@@ -79,6 +80,7 @@ class CogitareApp extends StatelessWidget {
         TelaDashboardResponsavel.route: (_) => const TelaDashboardResponsavel(),
         TelaDashboardCuidador.route: (_) => const TelaDashboardCuidador(),
         TelaCuidadoresProximos.route: (_) => const TelaCuidadoresProximos(),
+        TelaHistoricoServicos.route: (_) => const TelaHistoricoServicos(),
       },
     );
   }

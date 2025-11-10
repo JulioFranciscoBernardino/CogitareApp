@@ -1,3 +1,4 @@
+import 'package:cogitare_app/screens/tela_historico-servicos.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../controllers/dashboard_cuidador_controller.dart';
@@ -474,11 +475,7 @@ class _TelaDashboardCuidadorState extends State<TelaDashboardCuidador> {
                               icon: Icons.bar_chart,
                               title: 'Histórico',
                               onTap: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content:
-                                          Text('Histórico em desenvolvimento')),
-                                );
+                                Navigator.pushNamed(context, TelaHistoricoServicos.route);
                               },
                             ),
                           ],
