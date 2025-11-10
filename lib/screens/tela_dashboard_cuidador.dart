@@ -1,4 +1,5 @@
 import 'package:cogitare_app/screens/tela_historico-servicos.dart';
+import 'package:cogitare_app/screens/tela_propostas_recebidas.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../controllers/dashboard_cuidador_controller.dart';
@@ -443,13 +444,10 @@ class _TelaDashboardCuidadorState extends State<TelaDashboardCuidador> {
                               icon: Icons.email_outlined,
                               title: 'Propostas',
                               onTap: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content:
-                                          Text('Propostas em desenvolvimento')),
-                                );
-                              },
-                            ),
+                                Navigator.pushNamed(context, TelaPropostasRecebidas.route);
+                                },
+                              ),
+                            
                             _buildQuickAccessCard(
                               icon: Icons.calendar_today,
                               title: 'Agenda',
