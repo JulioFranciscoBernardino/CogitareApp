@@ -82,12 +82,6 @@ class TelaPropostasDetalhadas extends StatelessWidget {
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(50),
-                          child: Image.asset(
-                            "assets/images/exemplo_idoso.png",
-                            height: 50,
-                            width: 50,
-                            fit: BoxFit.cover,
-                          ),
                         ),
                         const SizedBox(width: 12),
                         const Expanded(
