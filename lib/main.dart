@@ -11,6 +11,7 @@ import 'screens/tela_sucesso.dart';
 import 'screens/tela_dashboard_responsavel.dart';
 import 'screens/tela_dashboard_cuidador.dart';
 import 'screens/tela_cuidadores_proximos.dart';
+import 'screens/tela_propostas_detalhadas.dart';
 import 'screens/onboarding.dart';
 
 
@@ -84,6 +85,7 @@ class CogitareApp extends StatelessWidget {
         TelaCuidadoresProximos.route: (_) => const TelaCuidadoresProximos(),
         TelaHistoricoServicos.route: (_) => const TelaHistoricoServicos(),
         TelaPropostasRecebidas.route: (_) => const TelaPropostasRecebidas(),
+        TelaPropostasDetalhadas.route: (_) => const TelaPropostasDetalhadas(),
       },
     );
   }

@@ -1,8 +1,9 @@
+import 'package:cogitare_app/screens/tela_propostas_detalhadas.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class TelaPropostasRecebidas extends StatelessWidget {
-  static const route = '/propostas-recebidas';
+  static const route = '/propostas-cuidadores';
 
   const TelaPropostasRecebidas({super.key});
 
@@ -31,7 +32,7 @@ class TelaPropostasRecebidas extends StatelessWidget {
                   ),
                   const SizedBox(width: 4),
 
-                  // LOGO
+                  // LOGO CENTRALIZADA
                   Expanded(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -40,7 +41,7 @@ class TelaPropostasRecebidas extends StatelessWidget {
                           "assets/images/logo_cogitare_horizontal.png",
                           height: 40,
                         ),
-                        ],
+                      ],
                     ),
                   ),
                   const SizedBox(width: 40), // balanceamento visual
@@ -54,7 +55,7 @@ class TelaPropostasRecebidas extends StatelessWidget {
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                "Propostas\nRecebidas",
+                "Propostas\npara Você",
                 style: TextStyle(
                   fontSize: 28,
                   height: 1.1,
@@ -66,72 +67,34 @@ class TelaPropostasRecebidas extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // CARD DE PROPOSTA
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF2F2F2),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    // Avatar
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: Image.asset(
-                        "assets/images/exemplo_idoso.png",
-                        height: 48,
-                        width: 48,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-
-                    // Texto
-                    const Expanded(
-                      child: Text(
-                        "João Maria tem uma proposta",
-                        style: TextStyle(
-                          color: Color(0xFF28323C),
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-
-                    // Botão VER
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF495866),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 18, vertical: 10),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                      ),
-                      onPressed: () {
-                        // Navegar para detalhes da proposta
-                        HapticFeedback.lightImpact();
-                      },
-                      child: const Text(
-                        "Ver",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+            // LISTA DE PROPOSTAS
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                children: [
+                  _buildPropostaCard(
+                    context,
+                    nome: "Carlos Silva",
+                    descricao: "Precisa de cuidados diurnos para seu pai",
+                    data: "12/11/2025",
+                  ),
+                  _buildPropostaCard(
+                    context,
+                    nome: "Maria Souza",
+                    descricao: "Busca cuidador para idosa com Alzheimer leve",
+                    data: "13/11/2025",
+                  ),
+                  _buildPropostaCard(
+                    context,
+                    nome: "Ana Oliveira",
+                    descricao: "Assistência noturna para idosa independente",
+                    data: "14/11/2025",
+                  ),
+                ],
               ),
             ),
 
-            const SizedBox(height: 32),
-
-            // LINHA SUTIL
+            // LINHA FINAL SUTIL
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Container(
@@ -141,6 +104,106 @@ class TelaPropostasRecebidas extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// ✅ Agora o método recebe o [BuildContext]
+  Widget _buildPropostaCard(
+    BuildContext context, {
+    required String nome,
+    required String descricao,
+    required String data,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF2F2F2),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ÍCONE DE USUÁRIO
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+              color: Color(0xFF495866),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.person,
+              color: Colors.white,
+              size: 28,
+            ),
+          ),
+
+          const SizedBox(width: 12),
+
+          // INFORMAÇÕES DA PROPOSTA
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  nome,
+                  style: const TextStyle(
+                    color: Color(0xFF28323C),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  descricao,
+                  style: const TextStyle(
+                    color: Color(0xFF495866),
+                    fontSize: 14,
+                    height: 1.3,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "Data: $data",
+                  style: const TextStyle(
+                    color: Color(0xFF8A8A8A),
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // BOTÕES DE AÇÃO
+          Column(
+            children: [
+              const SizedBox(height: 8),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 116, 97, 96),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 18, vertical: 10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 0,
+                ),
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                  Navigator.pushNamed(context, TelaPropostasDetalhadas.route);
+                },
+                child: const Text(
+                  "Detalhes",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ],
       ),
     );
   }
